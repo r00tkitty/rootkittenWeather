@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather Summary Grid</title>
+    <meta name="viewport" content="width=1920">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Nav toggle button -->
+    <button class="nav-toggle-btn" id="navToggleBtn" aria-label="Open navigation">
+        <img src="img/whiskervision.png" alt="Menu">
+    </button>
+    <!-- Sidebar navigation -->
+    <nav class="sidebar-nav" id="sidebarNav" aria-label="Sidebar Navigation">
+        <div class="sidebar-title">WeatherNav</div>
+        <input class="sidebar-search" type="text" placeholder="Search..." />
+        <div class="sidebar-option">
+            <span>Option Text</span>
+            <div class="sidebar-toggle" id="sidebarToggle1" tabindex="0" role="switch" aria-checked="false">
+                <div class="sidebar-toggle-knob"></div>
+            </div>
+        </div>
+        <div class="sidebar-bottom">
+            <div class="sidebar-toggle" id="sidebarToggleBottom" tabindex="0" role="switch" aria-checked="false">
+                <div class="sidebar-toggle-knob"></div>
+            </div>
+        </div>
+    </nav>
+    <div class="grid-container">
+        <!-- 4 'tmp' tiles -->
+        <div class="tile temp1">tmp</div>
+        <div class="tile temp2">tmp</div>
+        <div class="tile temp3">tmp</div>
+        <div class="tile temp4">tmp</div>
+        <!-- Title and subtitle (combined) -->
+        <div class="tile large-title">PLACE
+            <span class="subtitle">LAT LONG</span>
+        </div>
+        <!-- Placeholder (full width) -->
+        <div class="tile placeholder">placeholder</div>
+        <!-- Days tile (2 high, 12 wide) -->
+        <div class="tile days">
+            <div class="tile day mon">MON</div>
+            <div class="tile day tue">TUE</div>
+            <div class="tile day wed">WED</div>
+            <div class="tile day thu">THU</div>
+            <div class="tile day fri">FRI</div>
+            <div class="tile day sat">SAT</div>
+        </div>
+    </div>
+<script>
+// Sidebar open/close logic
+const navBtn = document.getElementById('navToggleBtn');
+const sidebar = document.getElementById('sidebarNav');
+navBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    navBtn.classList.toggle('open');
+});
+
+// Toggle switches logic
+function toggleSwitch(el) {
+    el.classList.toggle('active');
+    el.setAttribute('aria-checked', el.classList.contains('active'));
+}
+document.getElementById('sidebarToggle1').addEventListener('click', function() {
+    toggleSwitch(this);
+});
+document.getElementById('sidebarToggleBottom').addEventListener('click', function() {
+    toggleSwitch(this);
+});
+</script>
+</body>
+</html>
