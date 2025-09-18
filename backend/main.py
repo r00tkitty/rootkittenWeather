@@ -1,4 +1,3 @@
-# website health route (is it alive)
 from fastapi import FastAPI # import fastapi
 from fastapi.middleware.cors import CORSMiddleware #import cors bullshit
 import time # hey what time is it
@@ -12,7 +11,7 @@ app.add_middleware(
     allow_methods=["*"], # dev thing, allow from everywhere
     allow_headers=["*"], # you get it by now
 )
-
+# website health route (is it alive)
 @app.get("/health") # URL will be rootkitten.dev/weather/health.
 def health():
     return {"ok" : True, "t": int(time.time())}  # am i alive, what time is it
