@@ -16,7 +16,8 @@
     <!-- Sidebar navigation -->
     <nav class="sidebar-nav" id="sidebarNav" aria-label="Sidebar Navigation">
         <div class="sidebar-title">rk(weather);</div>
-        <input class="sidebar-search" type="text" placeholder="Search for a place." />
+    <input class="sidebar-search" type="text" placeholder="Search for a place." id="sidebarSearch" />
+    <div id="searchResults" class="search-results"></div>
         <div class="sidebar-option">
             <span>Option Text</span>
             <div class="sidebar-toggle" id="sidebarToggle1" tabindex="0" role="switch" aria-checked="false">
@@ -46,12 +47,49 @@
         <div class="tile temp4">tmp</div>
         <!-- Title and subtitle (combined) -->
         <div class="tile large-title">
-            <div id="placename">PLACE</div>
+            <span id="placename-text">PLACE</span>
+            <span id="country-text" class="country-text">COUNTRY</span>
             <div class="subtitle">
                 <div id="latitude">LAT</div>
                 <div id="longitude">LONG</div>
             </div>
         </div>
+<style>
+.country-text {
+    font-size: 1.2rem;
+    font-weight: 300;
+    color: #bdbdbd;
+    margin-top: -0.5em;
+    margin-bottom: 0.2em;
+    display: block;
+}
+</style>
+<style>
+/* Search results dropdown styles */
+.search-results {
+    background: #181818;
+    color: #fff;
+    max-height: 250px;
+    overflow-y: auto;
+    margin: 0 2vw;
+    border-radius: 0.5em;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    position: absolute;
+    z-index: 2000;
+    width: 80%;
+}
+.search-result-item {
+    padding: 0.7em 1em;
+    cursor: pointer;
+    border-bottom: 1px solid #222;
+}
+.search-result-item:last-child {
+    border-bottom: none;
+}
+.search-result-item:hover {
+    background: #222;
+}
+</style>
         <!-- Placeholder (full width) -->
         <div class="tile placeholder">placeholder</div>
         <!-- Days tile (2 high, 12 wide) -->
