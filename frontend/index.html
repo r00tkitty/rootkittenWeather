@@ -56,82 +56,65 @@
                 <div id="longitude">LONG</div>
             </div>
         </div>
-<style>
-.country-text {
-    font-size: 1.2rem;
-    font-weight: 300;
-    color: #bdbdbd;
-    margin-top: -0.5em;
-    margin-bottom: 0.2em;
-    display: block;
-}
-</style>
-<style>
-/* Search results dropdown styles */
-.search-bar-wrapper {
-    position: relative;
-    width: 100%;
-}
-.search-results {
-    background: #181818;
-    color: #fff;
-    max-height: calc(2.5em * 5); /* Show up to 5 results, then scroll */
-    overflow-y: auto;
-    border-radius: 0.5em;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: calc(100% + 4px);
-    z-index: 2000;
-    width: 100%;
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(-10px);
-    transition: opacity 0.25s cubic-bezier(.4,0,.2,1), transform 0.25s cubic-bezier(.4,0,.2,1);
-    scrollbar-width: thin;
-    scrollbar-color: #111 #181818;
-}
-.search-results::-webkit-scrollbar {
-    width: 8px;
-    background: #181818;
-}
-.search-results::-webkit-scrollbar-thumb {
-    background: #111;
-    border-radius: 8px;
-}
-.search-results::-webkit-scrollbar-track {
-    background: #181818;
-}
-.search-results.active {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0);
-}
-.search-result-item {
-    padding: 0.7em 1em;
-    cursor: pointer;
-    border-bottom: 1px solid #222;
-    min-height: 2.5em;
-    box-sizing: border-box;
-}
-.search-result-item:last-child {
-    border-bottom: none;
-}
-.search-result-item:hover {
-    background: #222;
-}
-</style>
+
         <!-- Placeholder (full width) -->
         <div class="tile placeholder">placeholder</div>
         <!-- Days tile (2 high, 12 wide) -->
         <div class="tile days">
-            <div class="tile day mon">MON</div>
-            <div class="tile day tue">TUE</div>
-            <div class="tile day wed">WED</div>
-            <div class="tile day thu">THU</div>
-            <div class="tile day fri">FRI</div>
-            <div class="tile day sat">SAT</div>
+            <div class="tile day mon">
+                <div class="day-icon">
+                    <img src="img/icon/svg/wi-day-sunny.svg" alt="Sunny" class="day-svg" />
+                </div>
+                <div class="day-label-row">
+                    <span class="day-name">MON</span>
+                    <span class="day-temp">23°</span>
+                </div>
+            </div>
+            <div class="tile day tue">
+                <div class="day-icon">
+                    <img src="img/icon/svg/wi-cloudy.svg" alt="Cloudy" class="day-svg" />
+                </div>
+                <div class="day-label-row">
+                    <span class="day-name">TUE</span>
+                    <span class="day-temp">19°</span>
+                </div>
+            </div>
+            <div class="tile day wed">
+                <div class="day-icon">
+                    <img src="img/icon/svg/wi-rain.svg" alt="Rain" class="day-svg" />
+                </div>
+                <div class="day-label-row">
+                    <span class="day-name">WED</span>
+                    <span class="day-temp">17°</span>
+                </div>
+            </div>
+            <div class="tile day thu">
+                <div class="day-icon">
+                    <img src="img/icon/svg/wi-day-snow.svg" alt="Snow" class="day-svg" />
+                </div>
+                <div class="day-label-row">
+                    <span class="day-name">THU</span>
+                    <span class="day-temp">12°</span>
+                </div>
+            </div>
+            <div class="tile day fri">
+                <div class="day-icon">
+                    <img src="img/icon/svg/wi-thunderstorm.svg" alt="Thunderstorm" class="day-svg" />
+                </div>
+                <div class="day-label-row">
+                    <span class="day-name">FRI</span>
+                    <span class="day-temp">15°</span>
+                </div>
+            </div>
+            <div class="tile day sat">
+                <div class="day-icon">
+                    <img src="img/icon/svg/wi-fog.svg" alt="Fog" class="day-svg" />
+                </div>
+                <div class="day-label-row">
+                    <span class="day-name">SAT</span>
+                    <span class="day-temp">16°</span>
+                </div>
+            </div>
         </div>
     </div>
 <script>
