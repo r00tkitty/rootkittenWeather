@@ -5,6 +5,8 @@
     <title>Weather Summary Grid</title>
     <meta name="viewport" content="width=1920">
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="img/whiskervision.png">
+    <script src="app.js"></script>
 </head>
 <body>
     <!-- Nav toggle button -->
@@ -13,8 +15,8 @@
     </button>
     <!-- Sidebar navigation -->
     <nav class="sidebar-nav" id="sidebarNav" aria-label="Sidebar Navigation">
-        <div class="sidebar-title">WeatherNav</div>
-        <input class="sidebar-search" type="text" placeholder="Search..." />
+        <div class="sidebar-title">rk(weather);</div>
+        <input class="sidebar-search" type="text" placeholder="Search for a place." />
         <div class="sidebar-option">
             <span>Option Text</span>
             <div class="sidebar-toggle" id="sidebarToggle1" tabindex="0" role="switch" aria-checked="false">
@@ -29,13 +31,26 @@
     </nav>
     <div class="grid-container">
         <!-- 4 'tmp' tiles -->
-        <div class="tile temp1">tmp</div>
-        <div class="tile temp2">tmp</div>
-        <div class="tile temp3">tmp</div>
+        <div class="tile degrees">
+            <div>
+                <p id="degreecelcius">tmpcelcius</h2>
+                <p id="degreefahrenheit">tmpfahrenheit</p>
+            </div>
+        </div>
+        <div class="tile windspd">
+        <div id="windspeed">
+            something KM/H
+        </div>
+        </div>
+        <div class="tile uv-index">UvVindex</div>
         <div class="tile temp4">tmp</div>
         <!-- Title and subtitle (combined) -->
-        <div class="tile large-title">PLACE
-            <span class="subtitle">LAT LONG</span>
+        <div class="tile large-title">
+            <div id="placename">PLACE</div>
+            <div class="subtitle">
+                <div id="latitude">LAT</div>
+                <div id="longitude">LONG</div>
+            </div>
         </div>
         <!-- Placeholder (full width) -->
         <div class="tile placeholder">placeholder</div>
