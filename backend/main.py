@@ -1,4 +1,3 @@
-# website health route (is it alive)
 from fastapi import FastAPI # import fastapi
 from fastapi.middleware.cors import CORSMiddleware #import cors bullshit
 import time # hey what time is it
@@ -12,7 +11,7 @@ app.add_middleware(
     allow_methods=["*"], # dev thing, allow from everywhere
     allow_headers=["*"], # you get it by now
 )
-
+# website health route (is it alive)
 @app.get("/health") # URL will be rootkitten.dev/weather/health.
 def health():
     return {"ok" : True, "t": int(time.time())}  # am i alive, what time is it
@@ -106,6 +105,7 @@ def pick_daily_icon(day_str : str, hourly_times: list[str], hourly_codes: list[i
 def weather_clean (lat: float, lon:float, days: int = 7, timezone: str="auto", name : str | None = None):
     try:
         res = requests.get(BASE_FORECAST, params={
+            "name": name or f"{lat:.4f}, {lon:.4f}",
             "latitude": lat,
             "longitude": lon,
             "timezone": timezone,
@@ -128,9 +128,12 @@ def weather_clean (lat: float, lon:float, days: int = 7, timezone: str="auto", n
         "lon": raw.get("longitude", lon),
         "timezone": tz,
     }
+    def celcius_to_f(c: float) -> float:
+        return round(c * 1.8 + 32)
     cur = raw.get("current", {}) or {}
     current = {
         "temp_c": round(cur.get("temperature_2m", 0), 1),
+        "temp_f": celcius_to_f(cur.get("temperature_2m", 0)),
         "feels_like": round(cur.get("apparent_temperature", 0), 1),
         "humidity": round(cur.get("relative_humidity_2m", 0), 1),
         "precip_mm": round(cur.get("precipitation", 0), 2),
