@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
         clearTimeout(searchTimeout);
         if (query.length < 2) {
             resultsDiv.innerHTML = '';
+            resultsDiv.classList.remove('active');
             return;
         }
         // Debounce search
@@ -31,11 +32,13 @@ document.addEventListener('DOMContentLoaded', () => {
             searchPlace(query).then(results => {
                 resultsDiv.innerHTML = '';
                 if (results.error) {
-                    resultsDiv.innerHTML = `<div class="search-result-item">Error: ${results.error}</div>`;
+                    resultsDiv.innerHTML = `<div class=\"search-result-item\">Error: ${results.error}</div>`;
+                    resultsDiv.classList.add('active');
                     return;
                 }
                 if (results.length === 0) {
-                    resultsDiv.innerHTML = `<div class="search-result-item">No results</div>`;
+                    resultsDiv.innerHTML = `<div class=\"search-result-item\">No results</div>`;
+                    resultsDiv.classList.add('active');
                     return;
                 }
                 results.forEach(place => {
@@ -45,12 +48,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     item.addEventListener('click', () => {
                         updateWeatherForPlace(place);
                         resultsDiv.innerHTML = '';
+                        resultsDiv.classList.remove('active');
                         searchInput.value = '';
                     });
                     resultsDiv.appendChild(item);
                 });
+                resultsDiv.classList.add('active');
             });
         }, 300);
+    });
+
+    // Hide results when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !resultsDiv.contains(e.target)) {
+            resultsDiv.classList.remove('active');
+        }
     });
 
     function updateWeatherForPlace(place) {
