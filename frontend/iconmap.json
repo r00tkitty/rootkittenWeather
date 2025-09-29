@@ -1,0 +1,37 @@
+{
+  "clear": "wi-day-sunny.svg",
+  "mainly_clear": "wi-day-sunny-overcast.svg",
+  "partly_cloudy": "wi-day-cloudy.svg",
+  "overcast": "wi-cloudy.svg",
+
+  "fog": "wi-fog.svg",
+
+  "drizzle_light": "wi-sprinkle.svg",
+  "drizzle_moderate": "wi-showers.svg",
+  "drizzle_dense": "wi-rain.svg",
+
+  "rain_light": "wi-showers.svg",
+  "rain_moderate": "wi-rain.svg",
+  "rain_heavy": "wi-rain-wind.svg",
+
+  "freezing_rain_light": "wi-rain-mix.svg",
+  "freezing_rain_heavy": "wi-rain-mix.svg",
+
+  "snow_light": "wi-snow.svg",
+  "snow_moderate": "wi-snow-wind.svg",
+  "snow_heavy": "wi-sleet.svg",
+  "snow_grains": "wi-snowflake-cold.svg",
+
+  "showers_light": "wi-day-showers.svg",
+  "showers_moderate": "wi-storm-showers.svg",
+  "showers_violent": "wi-rain-wind.svg",
+
+  "snow_showers_light": "wi-day-snow.svg",
+  "snow_showers_heavy": "wi-day-snow-thunderstorm.svg",
+
+  "thunderstorm": "wi-thunderstorm.svg",
+  "thunderstorm_hail": "wi-storm-showers.svg",
+  "thunderstorm_hail_heavy": "wi-day-thunderstorm.svg",
+
+  "unknown": "wi-na.svg"
+}
