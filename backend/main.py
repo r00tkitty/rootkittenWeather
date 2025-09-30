@@ -135,6 +135,7 @@ def weather_clean (lat: float, lon:float, days: int = 7, timezone: str="auto", n
         "temp_c": round(cur.get("temperature_2m", 0), 1),
         "temp_f": celcius_to_f(cur.get("temperature_2m", 0)),
         "feels_like": round(cur.get("apparent_temperature", 0), 1),
+        "feels_like_f": celcius_to_f(cur.get("apparent_temperature", 0)),
         "humidity": round(cur.get("relative_humidity_2m", 0), 1),
         "precip_mm": round(cur.get("precipitation", 0), 2),
         "wind_kph": round(cur.get("wind_speed_10m", 0)),
