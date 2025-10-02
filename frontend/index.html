@@ -118,12 +118,25 @@
         </div>
     </div>
 <script>
-// Sidebar open/close logic
+// Sidebar open/close logic with audio feedback
 const navBtn = document.getElementById('navToggleBtn');
 const sidebar = document.getElementById('sidebarNav');
+// Preload audio
+const audioOpen = new Audio('audio/SE_BUTTON_MENU_OPEN.wav');
+const audioClose = new Audio('audio/SE_BUTTON_MENU_CLOSE.wav');
 navBtn.addEventListener('click', () => {
+    const willOpen = !sidebar.classList.contains('open');
     sidebar.classList.toggle('open');
     navBtn.classList.toggle('open');
+    if (willOpen) {
+        audioOpen.volume = 0.5; // Full volume for open sound
+        audioOpen.currentTime = 0;
+        audioOpen.play();
+    } else {
+        audioClose.volume = 0.5; // Lower volume for close sound
+        audioClose.currentTime = 0;
+        audioClose.play();
+    }
 });
 
 // Toggle switches logic
