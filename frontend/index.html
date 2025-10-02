@@ -21,8 +21,20 @@
         <div id="searchResults" class="search-results"></div>
     </div>
         <div class="sidebar-option">
-            <span>Option Text</span>
-            <div class="sidebar-toggle" id="sidebarToggle1" tabindex="0" role="switch" aria-checked="false">
+            <span>Enable mascot</span>
+            <div class="sidebar-toggle" id="sidebarToggleMascot" tabindex="0" role="switch" aria-checked="false">
+                <div class="sidebar-toggle-knob"></div>
+            </div>
+        </div>
+        <div class="sidebar-option">
+            <span>Fahrenheit measurement</span>
+            <div class="sidebar-toggle" id="sidebarToggleFahrenheit" tabindex="0" role="switch" aria-checked="false">
+                <div class="sidebar-toggle-knob"></div>
+            </div>
+        </div>
+        <div class="sidebar-option">
+            <span>Use API for feeling temperature</span>
+            <div class="sidebar-toggle" id="sidebarToggleFeeling" tabindex="0" role="switch" aria-checked="false">
                 <div class="sidebar-toggle-knob"></div>
             </div>
         </div>
@@ -45,8 +57,16 @@
             something KM/H
         </div>
         </div>
-        <div class="tile uv-index">UvVindex</div>
-        <div class="tile temp4">tmp</div>
+        <div class="tile uv-index">
+            <div class id=uv-index>
+                uvindx
+            </div>
+        </div>
+        <div class="tile humidity">
+            <div id="humidity">
+                humidity
+            </div>
+        </div>
         <!-- Title and subtitle (combined) -->
         <div class="tile large-title">
             <span id="placename-text">PLACE</span>
@@ -124,6 +144,9 @@ const sidebar = document.getElementById('sidebarNav');
 // Preload audio
 const audioOpen = new Audio('audio/SE_BUTTON_MENU_OPEN.wav');
 const audioClose = new Audio('audio/SE_BUTTON_MENU_CLOSE.wav');
+const audioHover = new Audio('audio/SE_BUTTON_SCROLL_TOUCH_OUT.wav');
+const audioPush = new Audio('audio/SE_BUTTON_PUSH.wav');
+const audioDecide = new Audio('audio/SE_DECIDE.wav');
 navBtn.addEventListener('click', () => {
     const willOpen = !sidebar.classList.contains('open');
     sidebar.classList.toggle('open');
@@ -139,12 +162,49 @@ navBtn.addEventListener('click', () => {
     }
 });
 
+// Hover sound for search result items
+document.addEventListener('DOMContentLoaded', () => {
+    const searchResults = document.getElementById('searchResults');
+    if (searchResults) {
+        searchResults.addEventListener('mouseover', function(e) {
+            if (e.target && e.target.classList.contains('search-result-item')) {
+                audioHover.currentTime = 0;
+                audioHover.volume = 0.5;
+                audioHover.play();
+            }
+        });
+        // Play push sound on mousedown
+        searchResults.addEventListener('mousedown', function(e) {
+            if (e.target && e.target.classList.contains('search-result-item')) {
+                audioPush.currentTime = 0;
+                audioPush.volume = 0.5;
+                audioPush.play();
+            }
+        });
+        // Play decide sound on mouseup/click (selection)
+        searchResults.addEventListener('mouseup', function(e) {
+            if (e.target && e.target.classList.contains('search-result-item')) {
+                audioDecide.currentTime = 0;
+                audioDecide.volume = 0.5;
+                audioDecide.play();
+            }
+        });
+    }
+});
+
 // Toggle switches logic
 function toggleSwitch(el) {
     el.classList.toggle('active');
     el.setAttribute('aria-checked', el.classList.contains('active'));
 }
-document.getElementById('sidebarToggle1').addEventListener('click', function() {
+// Add event listeners for each toggle
+document.getElementById('sidebarToggleMascot').addEventListener('click', function() {
+    toggleSwitch(this);
+});
+document.getElementById('sidebarToggleFahrenheit').addEventListener('click', function() {
+    toggleSwitch(this);
+});
+document.getElementById('sidebarToggleFeeling').addEventListener('click', function() {
     toggleSwitch(this);
 });
 document.getElementById('sidebarToggleBottom').addEventListener('click', function() {

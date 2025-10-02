@@ -136,6 +136,9 @@
     position: relative;
     cursor: pointer;
     transition: background 0.2s;
+    box-sizing: border-box;
+    min-width: 40px;
+    min-height: 24px;
 }
 .sidebar-toggle.active {
     background: #0af;
@@ -270,7 +273,7 @@ body {
 .tile.degrees { grid-column: 1 / span 2; grid-row: 1 / span 1; }
 .tile.windspd { grid-column: 1 / span 2; grid-row: 2 / span 1; }
 .tile.uv-index { grid-column: 11 / span 2; grid-row: 1 / span 1; }
-.tile.temp4 { grid-column: 11 / span 2; grid-row: 2 / span 1; }
+.tile.humidity { grid-column: 11 / span 2; grid-row: 2 / span 1; }
 /* Title+subtitle tile (centered between temps, 2 rows high) */
 .tile.large-title { grid-column: 3 / span 8; grid-row: 1 / span 2; }
 /* Placeholder: 1 high, 12 wide */

@@ -6,12 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('placename-text').textContent = defaultPlaceName;
     document.getElementById('country-text').textContent = 'Netherlands';
     fetchWeather(defaultLat, defaultLon).then(data => {
-        document.getElementById('degreecelcius').textContent = `${data.current.temp_c}°C`;
-        document.getElementById('degreefahrenheit').textContent = `${data.current.temp_f}°F`;
-        document.getElementById('latitude').textContent = `Lat: ${data.location.lat}`;
-        document.getElementById('longitude').textContent = `Lon: ${data.location.lon}`;
-        document.getElementById('windspeed').textContent = `Wind: ${data.current.wind_kph} KM/H`;
-        document.getElementById('uv-index').textContent = `UV Index: ${data.current.uv}`;
+    document.getElementById('degreecelcius').textContent = `${data.current.temp_c}°C`;
+    document.getElementById('degreefahrenheit').textContent = `${data.current.temp_f}°F`;
+    document.getElementById('latitude').textContent = `Lat: ${data.location.lat}`;
+    document.getElementById('longitude').textContent = `Lon: ${data.location.lon}`;
+    document.getElementById('windspeed').textContent = `Wind: ${data.current.wind_kph} KM/H`;
+    document.getElementById('uv-index').textContent = `UV Index: ${data.current.uv_index}`;
+    document.getElementById('humidity').textContent = `Humidity: ${data.current.humidity}%`;
     });
 
     // --- SEARCH BAR LOGIC ---
@@ -83,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('latitude').textContent = `Lat: ${data.location.lat}`;
             document.getElementById('longitude').textContent = `Lon: ${data.location.lon}`;
             document.getElementById('windspeed').textContent = `Wind: ${data.current.wind_kph} KM/H`;
-            document.getElementById('uv-index').textContent = `UV Index: ${data.current.uv}`;
+            document.getElementById('uv-index').textContent = `UV Index: ${data.current.uv_index}`;
         });
     }
 });
