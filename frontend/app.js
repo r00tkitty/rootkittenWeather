@@ -1,4 +1,128 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Sidebar open/close logic with audio feedback
+    const navBtn = document.getElementById('navToggleBtn');
+    const sidebar = document.getElementById('sidebarNav');
+    const audioOpen = new Audio('audio/SE_BUTTON_MENU_OPEN.wav');
+    const audioClose = new Audio('audio/SE_BUTTON_MENU_CLOSE.wav');
+    navBtn.addEventListener('click', () => {
+        const willOpen = !sidebar.classList.contains('open');
+        sidebar.classList.toggle('open');
+        navBtn.classList.toggle('open');
+        if (willOpen) {
+            audioOpen.volume = 0.5;
+            audioOpen.currentTime = 0;
+            audioOpen.play();
+        } else {
+            audioClose.volume = 0.5;
+            audioClose.currentTime = 0;
+            audioClose.play();
+        }
+    });
+
+    // Toggle switches logic
+    function toggleSwitch(el) {
+        el.classList.toggle('active');
+        el.setAttribute('aria-checked', el.classList.contains('active'));
+    }
+    document.getElementById('sidebarToggleMascot').addEventListener('click', function() {
+        toggleSwitch(this);
+    });
+    document.getElementById('sidebarToggleFahrenheit').addEventListener('click', function() {
+        toggleSwitch(this);
+    });
+    document.getElementById('sidebarToggleFeeling').addEventListener('click', function() {
+        toggleSwitch(this);
+    });
+    document.getElementById('sidebarToggleBottom').addEventListener('click', function() {
+        toggleSwitch(this);
+    });
+
+    // Hover and click sounds for search result items
+    const audioHover = new Audio('audio/SE_BUTTON_SCROLL_TOUCH_OUT.wav');
+    const audioPush = new Audio('audio/SE_BUTTON_PUSH.wav');
+    const audioDecide = new Audio('audio/SE_DECIDE.wav');
+    const searchResults = document.getElementById('searchResults');
+    if (searchResults) {
+        searchResults.addEventListener('mouseover', function(e) {
+            if (e.target && e.target.classList.contains('search-result-item')) {
+                audioHover.currentTime = 0;
+                audioHover.volume = 0.5;
+                audioHover.play();
+            }
+        });
+        searchResults.addEventListener('mousedown', function(e) {
+            if (e.target && e.target.classList.contains('search-result-item')) {
+                audioPush.currentTime = 0;
+                audioPush.volume = 0.5;
+                audioPush.play();
+            }
+        });
+        searchResults.addEventListener('mouseup', function(e) {
+            if (e.target && e.target.classList.contains('search-result-item')) {
+                audioDecide.currentTime = 0;
+                audioDecide.volume = 0.5;
+                audioDecide.play();
+            }
+        });
+    }
+
+    // Mascot talking logic
+    const mascotContainer = document.getElementById('mascot-container');
+    const mascotImg = document.getElementById('mascot-img');
+    const mascotBubble = document.getElementById('mascot-bubble');
+    let mascotForecast = '';
+    let mascotTalking = false;
+    const mascotTalkAudio = new Audio('audio/talk.wav');
+    let mascotBubbleTimeout = null;
+
+    function showMascotBubble(text) {
+        mascotBubble.textContent = '';
+        mascotBubble.classList.remove('hidden');
+        mascotImg.src = 'img/mascot/talk.png';
+        mascotTalking = true;
+        let i = 0;
+        function typeLetter() {
+            if (i < text.length) {
+                mascotBubble.textContent += text[i];
+                if (text[i] !== ' ' && text[i] !== '\n') {
+                    mascotTalkAudio.currentTime = 0;
+                    mascotTalkAudio.play();
+                }
+                i++;
+                setTimeout(typeLetter, 32);
+            } else {
+                mascotTalking = false;
+                mascotImg.src = 'img/mascot/neutral.png';
+                mascotBubbleTimeout = setTimeout(() => mascotBubble.classList.add('hidden'), 5000);
+            }
+        }
+        clearTimeout(mascotBubbleTimeout);
+        typeLetter();
+    }
+    mascotBubble.addEventListener('mouseenter', () => {
+        clearTimeout(mascotBubbleTimeout);
+    });
+    mascotBubble.addEventListener('mouseleave', () => {
+        if (!mascotTalking) {
+            mascotBubbleTimeout = setTimeout(() => mascotBubble.classList.add('hidden'), 2000);
+        }
+    });
+
+    // Fetch forecast and show mascot on load
+    (async () => {
+        try {
+            const resp = await fetch('/weather_clean?lat=52.07667&lon=4.29861');
+            const data = await resp.json();
+            mascotForecast = data.weather_report || "Geen voorspelling beschikbaar.";
+        } catch {
+            mascotForecast = "Kon het weerbericht niet ophalen.";
+        }
+        showMascotBubble(mascotForecast);
+    })();
+
+    mascotImg.addEventListener('click', () => {
+        if (!mascotTalking) showMascotBubble(mascotForecast);
+    });
     // The default for now will be the hague
     const defaultLat = 52.07667;
     const defaultLon = 4.29861;
@@ -87,6 +211,9 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('uv-index').textContent = `UV Index: ${data.current.uv_index}`;
         });
     }
+
+
+
 });
 // Function to fetch current weather for a given latitude and longitude
 async function fetchWeather(lat, lon) {

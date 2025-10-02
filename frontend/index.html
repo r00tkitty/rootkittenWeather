@@ -9,6 +9,11 @@
     <script src="app.js"></script>
 </head>
 <body>
+    <!-- Mascot and speech bubble -->
+    <div id="mascot-container">
+    <div id="mascot-bubble" class="hidden"></div>
+    <img id="mascot-img" src="img/mascot/neutral.png" alt="Mascot" />
+    </div>
     <!-- Nav toggle button -->
     <button class="nav-toggle-btn" id="navToggleBtn" aria-label="Open navigation">
         <img src="img/whiskervision.png" alt="Menu">
@@ -137,79 +142,5 @@
             </div>
         </div>
     </div>
-<script>
-// Sidebar open/close logic with audio feedback
-const navBtn = document.getElementById('navToggleBtn');
-const sidebar = document.getElementById('sidebarNav');
-// Preload audio
-const audioOpen = new Audio('audio/SE_BUTTON_MENU_OPEN.wav');
-const audioClose = new Audio('audio/SE_BUTTON_MENU_CLOSE.wav');
-const audioHover = new Audio('audio/SE_BUTTON_SCROLL_TOUCH_OUT.wav');
-const audioPush = new Audio('audio/SE_BUTTON_PUSH.wav');
-const audioDecide = new Audio('audio/SE_DECIDE.wav');
-navBtn.addEventListener('click', () => {
-    const willOpen = !sidebar.classList.contains('open');
-    sidebar.classList.toggle('open');
-    navBtn.classList.toggle('open');
-    if (willOpen) {
-        audioOpen.volume = 0.5; // Full volume for open sound
-        audioOpen.currentTime = 0;
-        audioOpen.play();
-    } else {
-        audioClose.volume = 0.5; // Lower volume for close sound
-        audioClose.currentTime = 0;
-        audioClose.play();
-    }
-});
-
-// Hover sound for search result items
-document.addEventListener('DOMContentLoaded', () => {
-    const searchResults = document.getElementById('searchResults');
-    if (searchResults) {
-        searchResults.addEventListener('mouseover', function(e) {
-            if (e.target && e.target.classList.contains('search-result-item')) {
-                audioHover.currentTime = 0;
-                audioHover.volume = 0.5;
-                audioHover.play();
-            }
-        });
-        // Play push sound on mousedown
-        searchResults.addEventListener('mousedown', function(e) {
-            if (e.target && e.target.classList.contains('search-result-item')) {
-                audioPush.currentTime = 0;
-                audioPush.volume = 0.5;
-                audioPush.play();
-            }
-        });
-        // Play decide sound on mouseup/click (selection)
-        searchResults.addEventListener('mouseup', function(e) {
-            if (e.target && e.target.classList.contains('search-result-item')) {
-                audioDecide.currentTime = 0;
-                audioDecide.volume = 0.5;
-                audioDecide.play();
-            }
-        });
-    }
-});
-
-// Toggle switches logic
-function toggleSwitch(el) {
-    el.classList.toggle('active');
-    el.setAttribute('aria-checked', el.classList.contains('active'));
-}
-// Add event listeners for each toggle
-document.getElementById('sidebarToggleMascot').addEventListener('click', function() {
-    toggleSwitch(this);
-});
-document.getElementById('sidebarToggleFahrenheit').addEventListener('click', function() {
-    toggleSwitch(this);
-});
-document.getElementById('sidebarToggleFeeling').addEventListener('click', function() {
-    toggleSwitch(this);
-});
-document.getElementById('sidebarToggleBottom').addEventListener('click', function() {
-    toggleSwitch(this);
-});
-</script>
 </body>
 </html>
