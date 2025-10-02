@@ -100,6 +100,20 @@ def pick_daily_icon(day_str : str, hourly_times: list[str], hourly_codes: list[i
                 return map_weather_code(hourly_codes[i])
     return "unknown"
 
+def text_forecast(feels_like: float, wind_kph: float) -> str:
+        if feels_like < 0 and wind_kph > 10:
+            return "Het is heel koud en het stormt! Verwarming helemaal aan!"
+        elif feels_like < 0 and wind_kph <= 10:
+            return "Het is behoorlijk koud! Verwarming aan op de benedenverdieping!"
+        elif 10 > feels_like >= 0 and wind_kph > 12:
+            return "Het is best koud en het waait; verwarming aan en roosters dicht!"
+        elif 10 > feels_like >= 0 and wind_kph <= 12:
+            return "Het is een beetje koud, elektrische kachel op de benedenverdieping aan!"
+        elif 10 <= feels_like < 22:
+            return "Heerlijk weer, niet te koud of te warm."
+        else:
+            return "Warm! Airco aan!"
+
 @app.get("/weather_clean") 
 
 def weather_clean (lat: float, lon:float, days: int = 7, timezone: str="auto", name : str | None = None):
@@ -142,7 +156,9 @@ def weather_clean (lat: float, lon:float, days: int = 7, timezone: str="auto", n
         "uv_index": round(cur.get("uv_index", 0), 1),
         "icon": map_weather_code(cur.get("weather_code", 3)),
         "time" : (cur.get("time")[11:16] if cur.get("time") else "")
+
     }
+    weather_report = text_forecast(current["feels_like"], current["wind_kph"])
     daily = raw.get("daily", {}) or {}
     d_time = daily.get("time", []) or []
     d_hi = daily.get("temperature_2m_max", []) or []
@@ -201,6 +217,9 @@ def weather_clean (lat: float, lon:float, days: int = 7, timezone: str="auto", n
             "lo_c": round(d_lo[i], 1) if i < len(d_lo) else None,
             "icon": icon,
         })
+    
+
+        
 
     return {
         "location": loc,
@@ -208,4 +227,5 @@ def weather_clean (lat: float, lon:float, days: int = 7, timezone: str="auto", n
         "today": today,
         "hourly": hourly_list,
         "weekly": week_list,
+        "textreport": weather_report,
     }
