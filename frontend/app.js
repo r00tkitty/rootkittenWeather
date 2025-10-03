@@ -108,38 +108,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Fetch forecast and show mascot on load
-    (async () => {
-        try {
-            const resp = await fetch('/weather_clean?lat=52.07667&lon=4.29861');
-            const data = await resp.json();
-            mascotForecast = data.weather_report || "Geen voorspelling beschikbaar.";
-        } catch {
-            mascotForecast = "Kon het weerbericht niet ophalen.";
-        }
-        showMascotBubble(mascotForecast);
-    })();
-
+    let currentLat = 52.07667; // Default: The Hague
+    let currentLon = 4.29861;
+    function fetchMascotForecast(lat, lon) {
+        fetch(`http://127.0.0.1:8000/weather_clean?lat=${lat}&lon=${lon}`)
+            .then(resp => resp.json())
+            .then(data => {
+                mascotForecast = data.textreport || "Geen voorspelling beschikbaar.";
+                showMascotBubble(mascotForecast);
+            })
+            .catch(() => {
+                mascotForecast = "Kon het weerbericht niet ophalen.";
+                showMascotBubble(mascotForecast);
+            });
+    }
+    // On page load, show mascot forecast for default location
+    fetchMascotForecast(currentLat, currentLon);
     mascotImg.addEventListener('click', () => {
         if (!mascotTalking) showMascotBubble(mascotForecast);
     });
-    // The default for now will be the hague
-    const defaultLat = 52.07667;
-    const defaultLon = 4.29861;
-    const defaultPlaceName = "The Hague";
-    document.getElementById('placename-text').textContent = defaultPlaceName;
-    document.getElementById('country-text').textContent = 'Netherlands';
-    fetchWeather(defaultLat, defaultLon).then(data => {
-    document.getElementById('degreecelcius').textContent = `${data.current.temp_c}°C`;
-    document.getElementById('degreefahrenheit').textContent = `${data.current.temp_f}°F`;
-    document.getElementById('latitude').textContent = `Lat: ${data.location.lat}`;
-    document.getElementById('longitude').textContent = `Lon: ${data.location.lon}`;
-    document.getElementById('windspeed').textContent = `Wind: ${data.current.wind_kph} KM/H`;
-    document.getElementById('uv-index').textContent = `UV Index: ${data.current.uv_index}`;
-    document.getElementById('humidity').textContent = `Humidity: ${data.current.humidity}%`;
-    });
 
-    // --- SEARCH BAR LOGIC ---
+    // --- SEARCH BAR LOGIC --- 
     const searchInput = document.getElementById('sidebarSearch');
     const resultsDiv = document.getElementById('searchResults');
     let searchTimeout = null;
@@ -191,6 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function updateWeatherForPlace(place) {
+    console.log('updateWeatherForPlace called with:', place);
         // Try to split place name and country by comma
         let display = place.name || place.display_name || `${place.lat},${place.lon}`;
         let name = display;
@@ -202,18 +192,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         document.getElementById('placename-text').textContent = name;
         document.getElementById('country-text').textContent = country;
-        fetchWeather(place.lat, place.lon).then(data => {
+        currentLat = place.lat;
+        currentLon = place.lon;
+        fetchWeather(currentLat, currentLon).then(data => {
             document.getElementById('degreecelcius').textContent = `${data.current.temp_c}°C`;
             document.getElementById('degreefahrenheit').textContent = `${data.current.temp_f}°F`;
             document.getElementById('latitude').textContent = `Lat: ${data.location.lat}`;
             document.getElementById('longitude').textContent = `Lon: ${data.location.lon}`;
             document.getElementById('windspeed').textContent = `Wind: ${data.current.wind_kph} KM/H`;
             document.getElementById('uv-index').textContent = `UV Index: ${data.current.uv_index}`;
+            document.getElementById('humidity').textContent = `Humidity: ${data.current.humidity}%`;
+            fetchMascotForecast(currentLat, currentLon);
         });
     }
 
 
 
+    // Set The Hague as the default place on page load
+    updateWeatherForPlace({
+        name: "The Hague",
+        lat: 52.07667,
+        lon: 4.29861,
+        display_name: "The Hague, Netherlands"
+    });
 });
 // Function to fetch current weather for a given latitude and longitude
 async function fetchWeather(lat, lon) {
