@@ -24,16 +24,16 @@ document.addEventListener('DOMContentLoaded', () => {
         el.classList.toggle('active');
         el.setAttribute('aria-checked', el.classList.contains('active'));
     }
-    document.getElementById('sidebarToggleMascot').addEventListener('click', function() {
+    document.getElementById('sidebarToggleMascot').addEventListener('click', function () {
         toggleSwitch(this);
     });
-    document.getElementById('sidebarToggleFahrenheit').addEventListener('click', function() {
+    document.getElementById('sidebarToggleFahrenheit').addEventListener('click', function () {
         toggleSwitch(this);
     });
-    document.getElementById('sidebarToggleFeeling').addEventListener('click', function() {
+    document.getElementById('sidebarToggleFeeling').addEventListener('click', function () {
         toggleSwitch(this);
     });
-    document.getElementById('sidebarToggleBottom').addEventListener('click', function() {
+    document.getElementById('sidebarToggleBottom').addEventListener('click', function () {
         toggleSwitch(this);
     });
 
@@ -43,21 +43,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const audioDecide = new Audio('audio/SE_DECIDE.wav');
     const searchResults = document.getElementById('searchResults');
     if (searchResults) {
-        searchResults.addEventListener('mouseover', function(e) {
+        searchResults.addEventListener('mouseover', function (e) {
             if (e.target && e.target.classList.contains('search-result-item')) {
                 audioHover.currentTime = 0;
                 audioHover.volume = 0.5;
                 audioHover.play();
             }
         });
-        searchResults.addEventListener('mousedown', function(e) {
+        searchResults.addEventListener('mousedown', function (e) {
             if (e.target && e.target.classList.contains('search-result-item')) {
                 audioPush.currentTime = 0;
                 audioPush.volume = 0.5;
                 audioPush.play();
             }
         });
-        searchResults.addEventListener('mouseup', function(e) {
+        searchResults.addEventListener('mouseup', function (e) {
             if (e.target && e.target.classList.contains('search-result-item')) {
                 audioDecide.currentTime = 0;
                 audioDecide.volume = 0.5;
@@ -67,33 +67,109 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Mascot talking logic
+    
     const mascotContainer = document.getElementById('mascot-container');
     const mascotImg = document.getElementById('mascot-img');
+    window.mascotImg = mascotImg;
+    // Set consistent mascot image size (adjust as needed)
+    mascotImg.style.width = '16vh';
+    mascotImg.style.height = '16vh';
+    mascotImg.style.objectFit = 'contain';
+    // Track the current mascot's base name (e.g., 'mascot', 'mysteryman')
+    let mascotBaseName = 'mascot';
     const mascotBubble = document.getElementById('mascot-bubble');
     let mascotForecast = '';
     let mascotTalking = false;
-    const mascotTalkAudio = new Audio('audio/talk.wav');
+    const mascotTalkAudio = new Audio('audio/voca/snd_txtal.wav');
+    const tennaVoices = [
+    'audio/voca/ten/snd_tv_voice_short.wav',
+    'audio/voca/ten/snd_tv_voice_short_2.wav',
+    'audio/voca/ten/snd_tv_voice_short_3.wav',
+    'audio/voca/ten/snd_tv_voice_short_4.wav',
+    'audio/voca/ten/snd_tv_voice_short_5.wav',
+    'audio/voca/ten/snd_tv_voice_short_6.wav',
+    'audio/voca/ten/snd_tv_voice_short_7.wav',
+    'audio/voca/ten/snd_tv_voice_short_8.wav',
+    'audio/voca/ten/snd_tv_voice_short_9.wav',
+    'audio/voca/ten/snd_tv_voice_short_10.wav',
+    ];
+    const gasterVoices = [
+    'audio/voca/gas/snd_wngdng1.wav',
+    'audio/voca/gas/snd_wngdng2.wav',
+    'audio/voca/gas/snd_wngdng3.wav',
+    'audio/voca/gas/snd_wngdng4.wav',
+    'audio/voca/gas/snd_wngdng5.wav',
+    'audio/voca/gas/snd_wngdng6.wav',
+    'audio/voca/gas/snd_wngdng7.wav',
+    ];
+    let currentVoiceSet = tennaVoices;
+    let oneOffVoice = null;
+    function setMascotVoiceSet(voiceSet) {
+        currentVoiceSet = voiceSet;
+        oneOffVoice = null;
+    }
+    function setMascotOneOffVoice(filePath) {
+        oneOffVoice = filePath;
+    }
+    setMascotOneOffVoice('audio/voca/talk.wav');
     let mascotBubbleTimeout = null;
 
     function showMascotBubble(text) {
-        mascotBubble.textContent = '';
-        mascotBubble.classList.remove('hidden');
-        mascotImg.src = 'img/mascot/talk.png';
-        mascotTalking = true;
+        // Cancel any running animation
+        if (window.mascotTypeTimeout) {
+            clearTimeout(window.mascotTypeTimeout);
+            window.mascotTypeTimeout = null;
+        }
+    mascotBubble.textContent = '';
+    mascotBubble.classList.remove('hidden');
+    // Try mascotBaseName_talk.gif, .webp, .png, fallback to talk.png if not found
+    function tryTalkSprite(exts, idx = 0) {
+        if (idx >= exts.length) {
+            mascotImg.src = 'img/mascot/talk.png';
+            return;
+        }
+        const trySrc = `img/mascot/${mascotBaseName}_talk.${exts[idx]}`;
+        const img = new Image();
+        img.onload = function() { mascotImg.src = trySrc; };
+        img.onerror = function() { tryTalkSprite(exts, idx + 1); };
+        img.src = trySrc;
+    }
+    tryTalkSprite(['gif', 'webp', 'png']);
+    mascotTalking = true;
         let i = 0;
         function typeLetter() {
             if (i < text.length) {
                 mascotBubble.textContent += text[i];
                 if (text[i] !== ' ' && text[i] !== '\n') {
-                    mascotTalkAudio.currentTime = 0;
-                    mascotTalkAudio.play();
+                    let voiceSrc;
+                    if (oneOffVoice) {
+                        voiceSrc = oneOffVoice;
+                    } else {
+                        voiceSrc = currentVoiceSet[Math.floor(Math.random() * currentVoiceSet.length)];
+                    }
+                    const randomVoice = new Audio(voiceSrc);
+                    randomVoice.volume = 0.2;
+                    randomVoice.play();
                 }
                 i++;
-                setTimeout(typeLetter, 32);
+                window.mascotTypeTimeout = setTimeout(typeLetter, 48);
             } else {
                 mascotTalking = false;
-                mascotImg.src = 'img/mascot/neutral.png';
+                // Try mascotBaseName_neutral.gif, .webp, .png, fallback to neutral.png if not found
+                function tryNeutralSprite(exts, idx = 0) {
+                    if (idx >= exts.length) {
+                        mascotImg.src = 'img/mascot/neutral.png';
+                        return;
+                    }
+                    const trySrc = `img/mascot/${mascotBaseName}_neutral.${exts[idx]}`;
+                    const img = new Image();
+                    img.onload = function() { mascotImg.src = trySrc; };
+                    img.onerror = function() { tryNeutralSprite(exts, idx + 1); };
+                    img.src = trySrc;
+                }
+                tryNeutralSprite(['gif', 'webp', 'png']);
                 mascotBubbleTimeout = setTimeout(() => mascotBubble.classList.add('hidden'), 5000);
+                window.mascotTypeTimeout = null;
             }
         }
         clearTimeout(mascotBubbleTimeout);
@@ -115,14 +191,16 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(resp => resp.json())
             .then(data => {
                 mascotForecast = data.textreport || "Geen voorspelling beschikbaar.";
-                showMascotBubble(mascotForecast);
+                // Only show mascot bubble when city is loaded, not on page load
+                if (window.mascotShouldSpeak) showMascotBubble(mascotForecast);
             })
             .catch(() => {
                 mascotForecast = "Kon het weerbericht niet ophalen.";
-                showMascotBubble(mascotForecast);
+                if (window.mascotShouldSpeak) showMascotBubble(mascotForecast);
             });
     }
-    // On page load, show mascot forecast for default location
+    // On page load, fetch mascot forecast but do not speak
+    window.mascotShouldSpeak = false;
     fetchMascotForecast(currentLat, currentLon);
     mascotImg.addEventListener('click', () => {
         if (!mascotTalking) showMascotBubble(mascotForecast);
@@ -133,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultsDiv = document.getElementById('searchResults');
     let searchTimeout = null;
 
-    searchInput.addEventListener('input', function() {
+    searchInput.addEventListener('input', function () {
         const query = this.value.trim();
         clearTimeout(searchTimeout);
         if (query.length < 2) {
@@ -141,6 +219,45 @@ document.addEventListener('DOMContentLoaded', () => {
             resultsDiv.classList.remove('active');
             return;
         }
+      // Easter egg triggers and actions
+        const easterEggs = {
+            "tenna": () => {
+                window.mascotTalking = true;
+                mascotBaseName = 'tenna';
+                window.mascotImg.src = `img/mascot/${mascotBaseName}_neutral.webp`;
+                showMascotBubble("Hi! I'm Tenna, your weather assistant!");
+                setMascotVoiceSet(tennaVoices);
+            },
+            "owo": () => {
+                showMascotBubble("OwO! You found an Easter egg!");
+            },
+            "gaster": () => {
+                window.mascotTalking = true;
+                mascotBaseName = 'mysteryman';
+                window.mascotImg.src = `img/mascot/${mascotBaseName}_neutral.png`;
+                showMascotBubble("MY WEATHER IS VERY INTERESTING.");
+                setMascotVoiceSet(gasterVoices);
+            }
+                // You could also change the mascot voice, image, etc.
+            }
+            // Add more Easter eggs here
+
+
+        searchInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                const val = this.value.trim().toLowerCase();
+                if (easterEggs[val]) {
+                    e.preventDefault();
+                    easterEggs[val]();
+                    resultsDiv.innerHTML = '';
+                    resultsDiv.classList.remove('active');
+                    this.value = '';
+                }
+                // else, normal search will proceed as usual
+            }
+        });
+  
+
         // Debounce search
         searchTimeout = setTimeout(() => {
             searchPlace(query).then(results => {
@@ -173,14 +290,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Hide results when clicking outside
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         if (!searchInput.contains(e.target) && !resultsDiv.contains(e.target)) {
             resultsDiv.classList.remove('active');
         }
     });
 
     function updateWeatherForPlace(place) {
-    console.log('updateWeatherForPlace called with:', place);
+        console.log('updateWeatherForPlace called with:', place);
         // Try to split place name and country by comma
         let display = place.name || place.display_name || `${place.lat},${place.lon}`;
         let name = display;
@@ -202,6 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('windspeed').textContent = `Wind: ${data.current.wind_kph} KM/H`;
             document.getElementById('uv-index').textContent = `UV Index: ${data.current.uv_index}`;
             document.getElementById('humidity').textContent = `Humidity: ${data.current.humidity}%`;
+            window.mascotShouldSpeak = true;
             fetchMascotForecast(currentLat, currentLon);
         });
     }
@@ -245,7 +363,7 @@ async function searchPlace(query) {
     document.getElementById('windspd').textContent = `Wind: ${data.current.wind_kph} KM/H`;
     }); // Log the weather data to the console
      // Assuming your API returns data.current.temp_c and data.current.temp_f
-    
+
 */
 // Example usage: search for a place by name
 // searchPlace('berkum').then(data => console.log('Search:', data));
