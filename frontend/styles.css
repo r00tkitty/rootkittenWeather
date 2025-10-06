@@ -366,7 +366,7 @@ body {
 }
 
 .tile {
-    background: rgba(255,255,255,0.04);
+    background: rgba(255,255,255,0.0);
     border-radius: var(--radius);
     display: flex;
     align-items: center;
@@ -446,7 +446,7 @@ body {
 .tile.days { grid-column: 1 / span 12; grid-row: 4 / span 2; display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: 1fr; gap: var(--gutter); background: none; border: 2px solid rgb(255,255,255); align-items: stretch; justify-items: stretch; }
 /* Each day: 2 high, 2 wide inside days tile */
 .tile.day {
-    background: rgba(255,255,255,0.04);
+    background: rgba(255,255,255,0.00);
     border-radius: var(--radius);
     border: 2px solid rgb(255,255,255);
     display: flex;
