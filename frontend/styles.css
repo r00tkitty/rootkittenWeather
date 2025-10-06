@@ -401,12 +401,12 @@ body {
     background: none;
 }
 
-.tile.placeholder {
+.tile.wide {
     font-size: clamp(1.5rem, 4vw, 3.2rem);
     font-weight: 300;
     background: none;
     border: none;
-    border: 2px solid rgb(255, 255, 255);
+    border: 2px solid rgb(202, 131, 131);
 }
 
 .tile.day {
@@ -432,6 +432,26 @@ body {
     font-weight: 300;
 }
 
+
+#precip-container {
+  position: relative;
+  width: 100%;
+  height: 100%; /* adjustable: try 28–36vh for balance */
+  margin-top: 0vh;
+  background: rgba(0, 0, 0, 0.3); /* faint transparency if you like */
+  border: 2px solid #fff;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#precip-chart {
+  width: 95% !important;
+  height: 100% !important;
+}
+
+
 /* Grid item positions */
 /* 4 'tmp' tiles: 1 high, 2 wide */
 .tile.degrees { grid-column: 1 / span 2; grid-row: 1 / span 1; }
@@ -441,7 +461,7 @@ body {
 /* Title+subtitle tile (centered between temps, 2 rows high) */
 .tile.large-title { grid-column: 3 / span 8; grid-row: 1 / span 2; }
 /* Placeholder: 1 high, 12 wide */
-.tile.placeholder { grid-column: 1 / span 12; grid-row: 3 / span 1; }
+.tile.wide { grid-column: 1 / span 12; grid-row: 3 / span 1; }
 /* Days tile: 2 high, 12 wide */
 .tile.days { grid-column: 1 / span 12; grid-row: 4 / span 2; display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: 1fr; gap: var(--gutter); background: none; border: 2px solid rgb(255,255,255); align-items: stretch; justify-items: stretch; }
 /* Each day: 2 high, 2 wide inside days tile */

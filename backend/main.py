@@ -191,7 +191,7 @@ def weather_clean (lat: float, lon:float, days: int = 7, timezone: str="auto", n
         start_idx = h_time.index(cur_iso)
 
     hourly_list = []
-    for i in range(start_idx, min(start_idx + 12, len(h_time))):
+    for i in range(start_idx, min(start_idx + 24, len(h_time))):
         hhmm = h_time[i][11:16]
         hourly_list.append({
             "time": hhmm,

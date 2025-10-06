@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="img/whiskervision.png">
     <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.1"></script>
+
+
 </head>
 <body>
     <!-- Mascot and speech bubble -->
@@ -83,7 +87,9 @@
         </div>
 
         <!-- Placeholder (full width) -->
-        <div class="tile placeholder">placeholder</div>
+        <div class="tile wide" id="precip-container">
+            <canvas id="precip-chart"></canvas>
+        </div>
         <!-- Days tile (2 high, 12 wide) -->
         <div class="tile days">
             <div class="tile day" id="day-tile-1">

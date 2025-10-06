@@ -418,6 +418,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             updateDayTiles(data.weekly);
             window.mascotShouldSpeak = true;
             fetchMascotForecast(currentLat, currentLon);
+            if (data.hourly) updateHourlyPrecipChart(data.hourly);
+
         });
     }
 
@@ -456,3 +458,83 @@ async function searchPlace(query) {
 
 
 
+let hourlyChart = null;
+
+function updateHourlyPrecipChart(hourlyData) {
+    const ctx = document.getElementById('precip-chart').getContext('2d');
+    if (!hourlyData || hourlyData.length === 0) return;
+
+    const parsedData = hourlyData
+        .map(h => {
+            let hourNum;
+            if (h.time && h.time.includes(':')) {
+                hourNum = parseInt(h.time.split(':')[0]);
+            } else {
+                hourNum = new Date(h.time || h.timestamp || Date.now()).getHours();
+            }
+            return { ...h, hourNum };
+        })
+        .filter(h => h.hourNum >= 0 && h.hourNum <= 23)
+        .sort((a, b) => a.hourNum - b.hourNum);
+
+    const labels = parsedData.map(h => h.time || `${h.hourNum}:00`);
+    const values = parsedData.map(h => h.precip_mm ?? h.rain ?? 0);
+
+    const currentHour = new Date().getHours();
+
+    const data = {
+        labels,
+        datasets: [{
+            label: 'Precipitation (mm)',
+            data: values,
+            fill: true,
+            tension: 0.35,
+            pointRadius: 2,
+            borderWidth: 2,
+
+            // Dynamic coloring
+            segment: {
+                borderColor: ctx => {
+                    const i = ctx.p0DataIndex;
+                    const hour = parsedData[i]?.hourNum;
+                    return hour < currentHour ? '#4CC9FF' : '#FFFFFF';
+                },
+                backgroundColor: ctx => {
+                    const i = ctx.p0DataIndex;
+                    const hour = parsedData[i]?.hourNum;
+                    return hour < currentHour
+                        ? 'rgba(76, 201, 255, 0.2)'   // Light blue fill
+                        : 'rgba(255,255,255,0.15)';   // Default fill
+                }
+            }
+        }]
+    };
+
+    const options = {
+        scales: {
+            x: {
+                ticks: {
+                    color: '#ffffff',
+                    maxTicksLimit: 3,
+                    font: { family: 'Libre Franklin' }
+                },
+                grid: { color: 'rgba(255,255,255,0.05)' }
+            },
+            y: {
+                ticks: {
+                    color: '#ffffff',
+                    font: { family: 'Libre Franklin' }
+                },
+                grid: { color: 'rgba(255,255,255,0.05)' },
+                beginAtZero: true
+            }
+        },
+        plugins: { legend: { display: false } },
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: { duration: 700, easing: 'easeOutCubic' }
+    };
+
+    if (hourlyChart) hourlyChart.destroy();
+    hourlyChart = new Chart(ctx, { type: 'line', data, options });
+}
