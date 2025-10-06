@@ -53,8 +53,8 @@
         <!-- 4 'tmp' tiles -->
         <div class="tile degrees">
             <div>
-                <p id="degreecelcius">tmpcelcius</h2>
-                <p id="degreefahrenheit">tmpfahrenheit</p>
+                <p id="degreecelcius">--°C</p>
+                <p id="feelslike">Feels like --°C</p>
             </div>
         </div>
         <div class="tile windspd">
@@ -86,58 +86,46 @@
         <div class="tile placeholder">placeholder</div>
         <!-- Days tile (2 high, 12 wide) -->
         <div class="tile days">
-            <div class="tile day mon">
-                <div class="day-icon">
-                    <img src="img/icon/svg/wi-day-sunny.svg" alt="Sunny" class="day-svg" />
-                </div>
+            <div class="tile day" id="day-tile-1">
+                <div class="day-icon"><img id="day-icon-1" class="day-svg" /></div>
                 <div class="day-label-row">
-                    <span class="day-name">MON</span>
-                    <span class="day-temp">23°</span>
+                    <span class="day-name" id="day-name-1">Day 1</span>
+                    <span class="day-temp" id="day-temp-1">--°</span>
                 </div>
             </div>
-            <div class="tile day tue">
-                <div class="day-icon">
-                    <img src="img/icon/svg/wi-cloudy.svg" alt="Cloudy" class="day-svg" />
-                </div>
+            <div class="tile day" id="day-tile-2">
+                <div class="day-icon"><img id="day-icon-2" class="day-svg" /></div>
                 <div class="day-label-row">
-                    <span class="day-name">TUE</span>
-                    <span class="day-temp">19°</span>
+                    <span class="day-name" id="day-name-2">Day 2</span>
+                    <span class="day-temp" id="day-temp-2">--°</span>
                 </div>
             </div>
-            <div class="tile day wed">
-                <div class="day-icon">
-                    <img src="img/icon/svg/wi-rain.svg" alt="Rain" class="day-svg" />
-                </div>
+            <div class="tile day" id="day-tile-3">
+                <div class="day-icon"><img id="day-icon-3" class="day-svg" /></div>
                 <div class="day-label-row">
-                    <span class="day-name">WED</span>
-                    <span class="day-temp">17°</span>
+                    <span class="day-name" id="day-name-3">Day 3</span>
+                    <span class="day-temp" id="day-temp-3">--°</span>
                 </div>
             </div>
-            <div class="tile day thu">
-                <div class="day-icon">
-                    <img src="img/icon/svg/wi-day-snow.svg" alt="Snow" class="day-svg" />
-                </div>
+            <div class="tile day" id="day-tile-4">
+                <div class="day-icon"><img id="day-icon-4" class="day-svg" /></div>
                 <div class="day-label-row">
-                    <span class="day-name">THU</span>
-                    <span class="day-temp">12°</span>
+                    <span class="day-name" id="day-name-4">Day 4</span>
+                    <span class="day-temp" id="day-temp-4">--°</span>
                 </div>
             </div>
-            <div class="tile day fri">
-                <div class="day-icon">
-                    <img src="img/icon/svg/wi-thunderstorm.svg" alt="Thunderstorm" class="day-svg" />
-                </div>
+            <div class="tile day" id="day-tile-5">
+                <div class="day-icon"><img id="day-icon-5" class="day-svg" /></div>
                 <div class="day-label-row">
-                    <span class="day-name">FRI</span>
-                    <span class="day-temp">15°</span>
+                    <span class="day-name" id="day-name-5">Day 5</span>
+                    <span class="day-temp" id="day-temp-5">--°</span>
                 </div>
             </div>
-            <div class="tile day sat">
-                <div class="day-icon">
-                    <img src="img/icon/svg/wi-fog.svg" alt="Fog" class="day-svg" />
-                </div>
+            <div class="tile day" id="day-tile-6">
+                <div class="day-icon"><img id="day-icon-6" class="day-svg" /></div>
                 <div class="day-label-row">
-                    <span class="day-name">SAT</span>
-                    <span class="day-temp">16°</span>
+                    <span class="day-name" id="day-name-6">Day 6</span>
+                    <span class="day-temp" id="day-temp-6">--°</span>
                 </div>
             </div>
         </div>

@@ -1,3 +1,112 @@
+/* FONT IMPORT */
+/* PixelOperator Regular */
+@font-face {
+  font-family: 'PixelOperator';
+  src: url('font/pixeloperator/PixelOperator.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+/* PixelOperator Bold */
+@font-face {
+  font-family: 'PixelOperator-bold';
+  src: url('font/pixeloperator/PixelOperator-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+/* PixelOperator8 Regular */
+@font-face {
+  font-family: 'PixelOperator8';
+  src: url('font/pixeloperator/PixelOperator8.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+/* PixelOperator8 Bold */
+@font-face {
+  font-family: 'PixelOperator8';
+  src: url('font/pixeloperator/PixelOperator8-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+/* PixelOperatorHB */
+@font-face {
+  font-family: 'PixelOperatorHB';
+  src: url('font/pixeloperator/PixelOperatorHB.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+}
+/* PixelOperatorHB8 */
+@font-face {
+  font-family: 'PixelOperatorHB8';
+  src: url('font/pixeloperator/PixelOperatorHB8.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+}
+/* PixelOperatorHBSC */
+@font-face {
+  font-family: 'PixelOperatorHBSC';
+  src: url('font/pixeloperator/PixelOperatorHBSC.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+}
+/* PixelOperatorMono Regular */
+@font-face {
+  font-family: 'PixelOperatorMono';
+  src: url('font/pixeloperator/PixelOperatorMono.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+/* PixelOperatorMono Bold */
+@font-face {
+  font-family: 'PixelOperatorMono';
+  src: url('font/pixeloperator/PixelOperatorMono-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+/* PixelOperatorMono8 Regular */
+@font-face {
+  font-family: 'PixelOperatorMono8';
+  src: url('font/pixeloperator/PixelOperatorMono8.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+/* PixelOperatorMono8 Bold */
+@font-face {
+  font-family: 'PixelOperatorMono8';
+  src: url('font/pixeloperator/PixelOperatorMono8-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+/* PixelOperatorMonoHB */
+@font-face {
+  font-family: 'PixelOperatorMonoHB';
+  src: url('font/pixeloperator/PixelOperatorMonoHB.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+}
+/* PixelOperatorMonoHB8 */
+@font-face {
+  font-family: 'PixelOperatorMonoHB8';
+  src: url('font/pixeloperator/PixelOperatorMonoHB8.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+}
+/* PixelOperatorSC Regular */
+@font-face {
+  font-family: 'PixelOperatorSC';
+  src: url('font/pixeloperator/PixelOperatorSC.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+/* PixelOperatorSC Bold */
+@font-face {
+  font-family: 'PixelOperatorSC';
+  src: url('font/pixeloperator/PixelOperatorSC-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+
+
 /* Mascot styles */
 #mascot-container {
     position: fixed;
@@ -311,7 +420,7 @@ body {
     font-size: clamp(1.5rem, 3vw, 2.5rem);
     font-weight: 300;
 }
-#degreefahrenheit {
+#feelslike {
     margin: 0;
     color: #c9c9c9;
     font-size: clamp(1.5rem, 3vw, 2.5rem);

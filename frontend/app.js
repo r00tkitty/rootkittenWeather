@@ -1,5 +1,51 @@
-document.addEventListener('DOMContentLoaded', () => {
+let iconMap = {};
+
+async function loadIconMap() {
+    try {
+        const res = await fetch('iconmap.json');
+        if (!res.ok) throw new Error(`Failed to load iconmap.json: ${res.status}`);
+        iconMap = await res.json();
+    } catch (err) {
+        console.error('Error loading iconmap.json:', err);
+        // fallback in case loading fails
+        iconMap = { unknown: 'wi-na.svg' };
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+
+        await loadIconMap();
+    console.log("✅ Icon map loaded:", iconMap);
+    // --- Dynamic Day Tiles ---
+    
+
+    // Example: call updateDayTiles with dummy data on load
+   function updateDayTiles(weeklyData) {
+    for (let i = 0; i < 6; i++) {
+        const dayNum = i + 1;
+        const dayEl = document.getElementById(`day-name-${dayNum}`);
+        const tempEl = document.getElementById(`day-temp-${dayNum}`);
+        const iconEl = document.getElementById(`day-icon-${dayNum}`);
+
+        if (weeklyData && weeklyData[i]) {
+            const forecast = weeklyData[i];
+            dayEl.textContent = forecast.day;
+            tempEl.textContent = `${forecast.hi_c}°`;
+
+            const iconFile = iconMap[forecast.icon] || iconMap["unknown"];
+            iconEl.src = `img/icon/svg/${iconFile}`;
+            iconEl.alt = forecast.icon;
+        } else {
+            dayEl.textContent = `Day ${dayNum}`;
+            tempEl.textContent = "--°";
+            iconEl.src = `img/icon/svg/${iconMap["unknown"]}`;
+        }
+    }
+
+   };
     // Sidebar open/close logic with audio feedback
+    let typeSpd = 48; // milliseconds per character
+    let latestWeatherData = null; // cache of last fetched weather
     const navBtn = document.getElementById('navToggleBtn');
     const sidebar = document.getElementById('sidebarNav');
     const audioOpen = new Audio('audio/SE_BUTTON_MENU_OPEN.wav');
@@ -29,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     document.getElementById('sidebarToggleFahrenheit').addEventListener('click', function () {
         toggleSwitch(this);
+        renderTemperatures();
     });
     document.getElementById('sidebarToggleFeeling').addEventListener('click', function () {
         toggleSwitch(this);
@@ -134,8 +181,10 @@ document.addEventListener('DOMContentLoaded', () => {
         img.onerror = function() { tryTalkSprite(exts, idx + 1); };
         img.src = trySrc;
     }
+    
     tryTalkSprite(['gif', 'webp', 'png']);
     mascotTalking = true;
+    
         let i = 0;
         function typeLetter() {
             if (i < text.length) {
@@ -152,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     randomVoice.play();
                 }
                 i++;
-                window.mascotTypeTimeout = setTimeout(typeLetter, 48);
+                window.mascotTypeTimeout = setTimeout(typeLetter, typeSpd);
             } else {
                 mascotTalking = false;
                 // Try mascotBaseName_neutral.gif, .webp, .png, fallback to neutral.png if not found
@@ -224,8 +273,10 @@ document.addEventListener('DOMContentLoaded', () => {
             "tenna": () => {
                 window.mascotTalking = true;
                 mascotBaseName = 'tenna';
+                typeSpd = 67; 
                 window.mascotImg.src = `img/mascot/${mascotBaseName}_neutral.webp`;
-                showMascotBubble("Hi! I'm Tenna, your weather assistant!");
+                document.getElementById('mascot-bubble').style.fontFamily = 'PixelOperator-bold';
+                showMascotBubble("And now for the weather forecast, folks!!");
                 setMascotVoiceSet(tennaVoices);
             },
             "owo": () => {
@@ -235,6 +286,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.mascotTalking = true;
                 mascotBaseName = 'mysteryman';
                 window.mascotImg.src = `img/mascot/${mascotBaseName}_neutral.png`;
+                document.getElementById('mascot-bubble').style.fontFamily = 'Wingdings';
+                typeSpd = 64;
                 showMascotBubble("MY WEATHER IS VERY INTERESTING.");
                 setMascotVoiceSet(gasterVoices);
             }
@@ -296,6 +349,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    function renderTemperatures() {
+        if (!latestWeatherData) return;
+        const isF = document.getElementById('sidebarToggleFahrenheit').classList.contains('active');
+        const cur = latestWeatherData.current || {};
+        const tempC = cur.temp_c ?? '--';
+        const tempF = cur.temp_f ?? '--';
+        const feelsC = cur.feels_like ?? tempC;
+        const feelsF = cur.feels_like_f ?? tempF;
+        if (isF) {
+            const displayTemp = tempF !== '--' ? `${tempF}°F` : '--';
+            const displayFeels = feelsF !== '--' ? `Feels like ${feelsF}°F` : 'Feels like --';
+            const el = document.getElementById('degreecelcius');
+            if (el) el.textContent = displayTemp;
+            const fl = document.getElementById('feelslike');
+            if (fl) fl.textContent = displayFeels;
+        } else {
+            const displayTemp = tempC !== '--' ? `${tempC}°C` : '--';
+            const displayFeels = feelsC !== '--' ? `Feels like ${feelsC}°C` : 'Feels like --';
+            const el = document.getElementById('degreecelcius');
+            if (el) el.textContent = displayTemp;
+            const fl = document.getElementById('feelslike');
+            if (fl) fl.textContent = displayFeels;
+        }
+    }
+
     function updateWeatherForPlace(place) {
         console.log('updateWeatherForPlace called with:', place);
         // Try to split place name and country by comma
@@ -312,13 +390,14 @@ document.addEventListener('DOMContentLoaded', () => {
         currentLat = place.lat;
         currentLon = place.lon;
         fetchWeather(currentLat, currentLon).then(data => {
-            document.getElementById('degreecelcius').textContent = `${data.current.temp_c}°C`;
-            document.getElementById('degreefahrenheit').textContent = `${data.current.temp_f}°F`;
+            latestWeatherData = data;
+            renderTemperatures();
             document.getElementById('latitude').textContent = `Lat: ${data.location.lat}`;
             document.getElementById('longitude').textContent = `Lon: ${data.location.lon}`;
             document.getElementById('windspeed').textContent = `Wind: ${data.current.wind_kph} KM/H`;
             document.getElementById('uv-index').textContent = `UV Index: ${data.current.uv_index}`;
             document.getElementById('humidity').textContent = `Humidity: ${data.current.humidity}%`;
+            updateDayTiles(data.weekly);
             window.mascotShouldSpeak = true;
             fetchMascotForecast(currentLat, currentLon);
         });
