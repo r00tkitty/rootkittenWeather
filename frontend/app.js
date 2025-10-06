@@ -70,8 +70,24 @@ document.addEventListener('DOMContentLoaded', async () => {
         el.classList.toggle('active');
         el.setAttribute('aria-checked', el.classList.contains('active'));
     }
+    function isMascotEnabled() {
+        return document.getElementById('sidebarToggleMascot').classList.contains('active');
+    }
+    function updateMascotEnabled() {
+        const enabled = isMascotEnabled();
+        mascotContainer.style.display = enabled ? 'block' : 'none';
+        if (!enabled) {
+            mascotBubble.classList.add('hidden');
+            mascotTalking = false;
+            if (window.mascotTypeTimeout) {
+                clearTimeout(window.mascotTypeTimeout);
+                window.mascotTypeTimeout = null;
+            }
+        }
+    }
     document.getElementById('sidebarToggleMascot').addEventListener('click', function () {
         toggleSwitch(this);
+        updateMascotEnabled();
     });
     document.getElementById('sidebarToggleFahrenheit').addEventListener('click', function () {
         toggleSwitch(this);
@@ -162,6 +178,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let mascotBubbleTimeout = null;
 
     function showMascotBubble(text) {
+        if (!isMascotEnabled()) return; // gate when disabled
         // Cancel any running animation
         if (window.mascotTypeTimeout) {
             clearTimeout(window.mascotTypeTimeout);
@@ -252,6 +269,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.mascotShouldSpeak = false;
     fetchMascotForecast(currentLat, currentLon);
     mascotImg.addEventListener('click', () => {
+        if (!isMascotEnabled()) return;
         if (!mascotTalking) showMascotBubble(mascotForecast);
     });
 
@@ -405,6 +423,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
 
+    // Apply initial mascot enabled state
+    updateMascotEnabled();
+
     // Set The Hague as the default place on page load
     updateWeatherForPlace({
         name: "The Hague",
@@ -433,18 +454,5 @@ async function searchPlace(query) {
     return await res.json();
 }
 
-// Example usage: fetch weather for a specific location
-/* fetchWeather(52.5219, 6.1355).then(data =>{
-    document.getElementById('degreecelcius').textContent = `${data.current.temp_c}°C`;
-    document.getElementById('degreefahrenheit').textContent = `${data.current.temp_f}°F`;
-    document.getElementById('latitude').textContent = `Lat: ${data.location.lat}`;
-    document.getElementById('longitude').textContent = `Lon: ${data.location.lon}`;
-    document.getElementById('windspd').textContent = `Wind: ${data.current.wind_kph} KM/H`;
-    }); // Log the weather data to the console
-     // Assuming your API returns data.current.temp_c and data.current.temp_f
-
-*/
-// Example usage: search for a place by name
-// searchPlace('berkum').then(data => console.log('Search:', data));
 
 

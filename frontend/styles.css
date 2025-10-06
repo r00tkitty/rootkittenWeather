@@ -113,9 +113,8 @@
     bottom: 2vw;
     right: 2vw;
     z-index: 3000;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+    /* Keep the container sized to the image so the image never shifts */
+    display: inline-block; /* prevents flex-based reflow */
     pointer-events: none;
 }
 #mascot-img {
@@ -130,18 +129,24 @@
     background: #222;
     color: #fff;
     border-radius: 1em;
-    padding: 1em 1.3em;
-    margin-bottom: 0;
-    margin-top: 0.5em;
-    font-size: 1.1em;
-    max-width: 320px;
+    padding: 0.85em 1.1em;
+    font-size: 1.05em;
+    max-width: 440px; /* allow a wider line before wrapping */
+    width: max-content; /* grow naturally to content until max-width */
+    min-width: 160px; /* keep a sensible minimum */
+    line-height: 1.25;
     box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-    position: relative;
+    position: absolute; /* removes it from normal flow so image no longer moves */
+    bottom: 110%; /* place bubble just above mascot image */
+    right: 0; /* align right edge with mascot image */
+    margin: 0; /* no vertical push */
     pointer-events: auto;
     user-select: none;
     transition: opacity 0.2s;
-    
     opacity: 1;
+    white-space: normal; /* allow normal wrapping */
+    overflow-wrap: break-word; /* wrap long words if needed */
+    word-break: normal;
 }
 #mascot-bubble.hidden {
     opacity: 0;
