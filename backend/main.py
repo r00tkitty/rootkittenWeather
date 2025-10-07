@@ -214,7 +214,9 @@ def weather_clean (lat: float, lon:float, days: int = 7, timezone: str="auto", n
             "day": wk,
             "date": day,
             "hi_c": round(d_hi[i], 1) if i < len(d_hi) else None,
+            "hi_f": round(celcius_to_f(d_hi[i]), 1) if i < len(d_hi) else None,
             "lo_c": round(d_lo[i], 1) if i < len(d_lo) else None,
+            "lo_f": round(celcius_to_f(d_lo[i]), 1) if i < len(d_lo) else None,
             "icon": icon,
         })
     

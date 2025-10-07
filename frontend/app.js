@@ -15,34 +15,37 @@ async function loadIconMap() {
 document.addEventListener('DOMContentLoaded', async () => {
 
         await loadIconMap();
-    console.log("✅ Icon map loaded:", iconMap);
+    console.log("Icon map loaded:", iconMap);
     // --- Dynamic Day Tiles ---
     
 
     // Example: call updateDayTiles with dummy data on load
    function updateDayTiles(weeklyData) {
+    const isF = document.getElementById('sidebarToggleFahrenheit')?.classList.contains('active');
     for (let i = 0; i < 6; i++) {
         const dayNum = i + 1;
         const dayEl = document.getElementById(`day-name-${dayNum}`);
         const tempEl = document.getElementById(`day-temp-${dayNum}`);
         const iconEl = document.getElementById(`day-icon-${dayNum}`);
-
+        if (!dayEl || !tempEl || !iconEl) continue;
         if (weeklyData && weeklyData[i]) {
-            const forecast = weeklyData[i];
-            dayEl.textContent = forecast.day;
-            tempEl.textContent = `${forecast.hi_c}°`;
-
-            const iconFile = iconMap[forecast.icon] || iconMap["unknown"];
+            const fc = weeklyData[i];
+            const hiC = fc.hi_c;
+            const hiF = fc.hi_f !== undefined ? fc.hi_f : (hiC !== undefined ? Math.round(hiC * 1.8 + 32) : undefined);
+            dayEl.textContent = fc.day || `Day ${dayNum}`;
+            const chosen = isF ? hiF : hiC;
+            tempEl.textContent = chosen !== undefined ? `${chosen}°` : '--°';
+            const iconFile = iconMap[fc.icon] || iconMap['unknown'];
             iconEl.src = `img/icon/svg/${iconFile}`;
-            iconEl.alt = forecast.icon;
+            iconEl.alt = fc.icon || 'unknown';
         } else {
             dayEl.textContent = `Day ${dayNum}`;
-            tempEl.textContent = "--°";
-            iconEl.src = `img/icon/svg/${iconMap["unknown"]}`;
+            tempEl.textContent = '--°';
+            iconEl.src = `img/icon/svg/${iconMap['unknown']}`;
+            iconEl.alt = 'unknown';
         }
     }
-
-   };
+   }
     // Sidebar open/close logic with audio feedback
     let typeSpd = 48; // milliseconds per character
     let latestWeatherData = null; // cache of last fetched weather
@@ -92,6 +95,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('sidebarToggleFahrenheit').addEventListener('click', function () {
         toggleSwitch(this);
         renderTemperatures();
+        if (latestWeatherData) updateDayTiles(latestWeatherData.weekly);
     });
     document.getElementById('sidebarToggleFeeling').addEventListener('click', function () {
         toggleSwitch(this);
@@ -515,7 +519,7 @@ function updateHourlyPrecipChart(hourlyData) {
             x: {
                 ticks: {
                     color: '#ffffff',
-                    maxTicksLimit: 3,
+                    maxTicksLimit: 24,
                     font: { family: 'Libre Franklin' }
                 },
                 grid: { color: 'rgba(255,255,255,0.05)' }
