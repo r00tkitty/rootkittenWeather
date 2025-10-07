@@ -144,6 +144,12 @@ def weather_clean (lat: float, lon:float, days: int = 7, timezone: str="auto", n
     }
     def celcius_to_f(c: float) -> float:
         return round(c * 1.8 + 32)
+    
+    def feelingTempCalc(c: float, w: float, h: float) -> float:
+        return round(c - (h / 100.0) * w, 1)
+    
+    def kph_to_mps(k: float) -> float:
+        return round(k * (5/18), 1)
     cur = raw.get("current", {}) or {}
     current = {
         "temp_c": round(cur.get("temperature_2m", 0), 1),
@@ -153,9 +159,12 @@ def weather_clean (lat: float, lon:float, days: int = 7, timezone: str="auto", n
         "humidity": round(cur.get("relative_humidity_2m", 0), 1),
         "precip_mm": round(cur.get("precipitation", 0), 2),
         "wind_kph": round(cur.get("wind_speed_10m", 0)),
+        "wind_mps": kph_to_mps(round(cur.get("wind_speed_10m", 0))),
         "uv_index": round(cur.get("uv_index", 0), 1),
         "icon": map_weather_code(cur.get("weather_code", 3)),
-        "time" : (cur.get("time")[11:16] if cur.get("time") else "")
+        "time" : (cur.get("time")[11:16] if cur.get("time") else ""),
+        "feelslike_calc": feelingTempCalc(cur.get("temperature_2m", 0), kph_to_mps(cur.get("wind_speed_10m", 0)), cur.get("relative_humidity_2m", 0)),
+        "feelslike_calc_f": celcius_to_f(feelingTempCalc(cur.get("temperature_2m", 0), kph_to_mps(cur.get("wind_speed_10m", 0)), cur.get("relative_humidity_2m", 0)))
 
     }
     weather_report = text_forecast(current["feels_like"], current["wind_kph"])

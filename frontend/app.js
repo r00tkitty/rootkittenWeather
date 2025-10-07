@@ -1,8 +1,9 @@
-let iconMap = {};
+let iconMap = {}; // Global variable to hold icon map
 
+// Load icon map from JSON file
 async function loadIconMap() {
     try {
-        const res = await fetch('iconmap.json');
+        const res = await fetch('iconmap.json'); // Ensure this path is correct
         if (!res.ok) throw new Error(`Failed to load iconmap.json: ${res.status}`);
         iconMap = await res.json();
     } catch (err) {
@@ -99,6 +100,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     document.getElementById('sidebarToggleFeeling').addEventListener('click', function () {
         toggleSwitch(this);
+        // Re-render temperatures to switch between API apparent temp and custom calc
+        renderTemperatures();
     });
     document.getElementById('sidebarToggleBottom').addEventListener('click', function () {
         toggleSwitch(this);
@@ -374,12 +377,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderTemperatures() {
         if (!latestWeatherData) return;
         const isF = document.getElementById('sidebarToggleFahrenheit').classList.contains('active');
+        const useApiFeels = document.getElementById('sidebarToggleFeeling').classList.contains('active');
         const cur = latestWeatherData.current || {};
         const tempC = cur.temp_c ?? '--';
         const tempF = cur.temp_f ?? '--';
-        const feelsC = cur.feels_like ?? tempC;
-        const feelsF = cur.feels_like_f ?? tempF;
-        if (isF) {
+        // Decide which feels-like source to use
+        const feelsC = useApiFeels ? (cur.feels_like ?? tempC) : (cur.feelslike_calc ?? cur.feels_like ?? tempC);
+        const feelsF = useApiFeels ? (cur.feels_like_f ?? tempF) : (cur.feelslike_calc_f ?? cur.feels_like_f ?? tempF);
+        if (isF) {  
             const displayTemp = tempF !== '--' ? `${tempF}°F` : '--';
             const displayFeels = feelsF !== '--' ? `Feels like ${feelsF}°F` : 'Feels like --';
             const el = document.getElementById('degreecelcius');
