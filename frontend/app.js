@@ -4,12 +4,12 @@ let iconMap = {}; // Global variable to hold icon map
 async function loadIconMap() {
     try {
         const res = await fetch('iconmap.json'); // Ensure this path is correct
-        if (!res.ok) throw new Error(`Failed to load iconmap.json: ${res.status}`);
-        iconMap = await res.json();
+        if (!res.ok) throw new Error(`Failed to load iconmap.json: ${res.status}`); // Error handling
+        iconMap = await res.json(); // Expecting a JSON object mapping icon names to filenames
     } catch (err) {
-        console.error('Error loading iconmap.json:', err);
+        console.error('Error loading iconmap.json:', err); // Log the error
         // fallback in case loading fails
-        iconMap = { unknown: 'wi-na.svg' };
+        iconMap = { unknown: 'wi-na.svg' }; // Default unknown icon
     }
 }
 
@@ -260,7 +260,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let currentLat = 52.07667; // Default: The Hague
     let currentLon = 4.29861;
     function fetchMascotForecast(lat, lon) {
-        fetch(`http://127.0.0.1:8000/weather_clean?lat=${lat}&lon=${lon}`)
+        fetch(`http://127.0.0.1:2929/weather_clean?lat=${lat}&lon=${lon}`)
             .then(resp => resp.json())
             .then(data => {
                 mascotForecast = data.textreport || "Geen voorspelling beschikbaar.";
@@ -448,7 +448,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Function to fetch current weather for a given latitude and longitude
 async function fetchWeather(lat, lon) {
     // Construct the backend API URL with query parameters for latitude and longitude
-    const url = `http://127.0.0.1:8000/weather_clean?lat=${lat}&lon=${lon}`;
+    const url = `http://127.0.0.1:2929/weather_clean?lat=${lat}&lon=${lon}`;
     // Send a GET request to the backend API endpoint
     const res = await fetch(url);
     // Parse the JSON response and return it
@@ -458,7 +458,7 @@ async function fetchWeather(lat, lon) {
 // Function to search for a place by query string
 async function searchPlace(query) {
     // Construct the backend API URL with the search query parameter (URL-encoded)
-    const url = `http://127.0.0.1:8000/search?q=${encodeURIComponent(query)}`;
+    const url = `http://127.0.0.1:2929/search?q=${encodeURIComponent(query)}`;
     // Send a GET request to the backend API endpoint
     const res = await fetch(url);
     // Parse the JSON response and return it
