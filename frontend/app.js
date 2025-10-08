@@ -1,18 +1,118 @@
+/* ===========================================================================
+    rootkittenWeather Frontend Script
+    this is a huge fucking mess and i hate it but it works so whatever
+    =========================================================================== */
+
+// ========================= [ CORE UTIL / FETCH STUFF ] =====================
+// all data grabbing is here.
+// ---------------------------------------------------------------------------
+// --- Utility & Data Fetch Functions ---
 let iconMap = {}; // Global variable to hold icon map
 
 // Load icon map from JSON file
 async function loadIconMap() {
     try {
-        const res = await fetch('iconmap.json'); // Ensure this path is correct
-        if (!res.ok) throw new Error(`Failed to load iconmap.json: ${res.status}`); // Error handling
-        iconMap = await res.json(); // Expecting a JSON object mapping icon names to filenames
+        const res = await fetch('iconmap.json');
+        if (!res.ok) throw new Error(`Failed to load iconmap.json: ${res.status}`);
+        iconMap = await res.json();
     } catch (err) {
-        console.error('Error loading iconmap.json:', err); // Log the error
-        // fallback in case loading fails
-        iconMap = { unknown: 'wi-na.svg' }; // Default unknown icon
+        console.error('Error loading iconmap.json:', err);
+        iconMap = { unknown: 'wi-na.svg' };
     }
 }
 
+// Function to fetch current weather for a given latitude and longitude
+async function fetchWeather(lat, lon) {
+    const url = `http://127.0.0.1:2929/weather_clean?lat=${lat}&lon=${lon}`;
+    const res = await fetch(url);
+    return await res.json();
+}
+
+// Function to search for a place by query string
+async function searchPlace(query) {
+    const url = `http://127.0.0.1:2929/search?q=${encodeURIComponent(query)}`;
+    const res = await fetch(url);
+    return await res.json();
+}
+
+let hourlyChart = null;
+
+function updateHourlyPrecipChart(hourlyData) {
+    const ctx = document.getElementById('precip-chart').getContext('2d');
+    if (!hourlyData || hourlyData.length === 0) return;
+    const parsedData = hourlyData
+        .map(h => {
+            let hourNum;
+            if (h.time && h.time.includes(':')) {
+                hourNum = parseInt(h.time.split(':')[0]);
+            } else {
+                hourNum = new Date(h.time || h.timestamp || Date.now()).getHours();
+            }
+            return { ...h, hourNum };
+        })
+        .filter(h => h.hourNum >= 0 && h.hourNum <= 23)
+        .sort((a, b) => a.hourNum - b.hourNum);
+    const labels = parsedData.map(h => h.time || `${h.hourNum}:00`);
+    const values = parsedData.map(h => h.precip_mm ?? h.rain ?? 0);
+    const currentHour = new Date().getHours();
+    const data = {
+        labels,
+        datasets: [{
+            label: 'Precipitation (mm)',
+            data: values,
+            fill: true,
+            tension: 0.35,
+            pointRadius: 2,
+            borderWidth: 2,
+            segment: {
+                borderColor: ctx => {
+                    const i = ctx.p0DataIndex;
+                    const hour = parsedData[i]?.hourNum;
+                    return hour < currentHour ? '#4CC9FF' : '#FFFFFF';
+                },
+                backgroundColor: ctx => {
+                    const i = ctx.p0DataIndex;
+                    const hour = parsedData[i]?.hourNum;
+                    return hour < currentHour
+                        ? 'rgba(76, 201, 255, 0.2)'
+                        : 'rgba(255,255,255,0.15)';
+                }
+            }
+        }]
+    };
+    const options = {
+        scales: {
+            x: {
+                ticks: {
+                    color: '#ffffff',
+                    maxTicksLimit: 24,
+                    font: { family: 'Libre Franklin' }
+                },
+                grid: { color: 'rgba(255,255,255,0.05)' }
+            },
+            y: {
+                ticks: {
+                    color: '#ffffff',
+                    font: { family: 'Libre Franklin' }
+                },
+                grid: { color: 'rgba(255,255,255,0.05)' },
+                beginAtZero: true
+            }
+        },
+        plugins: { legend: { display: false } },
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: { duration: 700, easing: 'easeOutCubic' }
+    };
+    if (hourlyChart) hourlyChart.destroy();
+    hourlyChart = new Chart(ctx, { type: 'line', data, options });
+}
+
+// --- Main App Logic ---
+// ========================= [ MAIN BOOTSTRAP EVENT ] ========================
+// ALL the UI wiring happens inside DOMContentLoaded. could this be modular?
+// absolutely. are we ripping it apart today? nah, if it ain't broke don't fix sbhit
+// ---------------------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', async () => {
 
         await loadIconMap();
@@ -21,7 +121,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     
 
     // Example: call updateDayTiles with dummy data on load
-   function updateDayTiles(weeklyData) {
+    // ====================== DAY TILE RENDERING (6-day strip) =================
+    // Takes weekly forecast array -> paints mini tiles. Depends on iconMap + F toggle.
+    // -------------------------------------------------------------------------
+    function updateDayTiles(weeklyData) {
     const isF = document.getElementById('sidebarToggleFahrenheit')?.classList.contains('active');
     for (let i = 0; i < 6; i++) {
         const dayNum = i + 1;
@@ -47,6 +150,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
    }
+    // ====================== SIDEBAR + TOGGLE BAR ===========================
+    // sidebar works here
+    // -----------------------------------------------------------------------
     // Sidebar open/close logic with audio feedback
     let typeSpd = 48; // milliseconds per character
     let latestWeatherData = null; // cache of last fetched weather
@@ -69,7 +175,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Toggle switches logic
+    // Toggle switches logic (generic + specific feature toggles)
     function toggleSwitch(el) {
         el.classList.toggle('active');
         el.setAttribute('aria-checked', el.classList.contains('active'));
@@ -107,6 +213,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         toggleSwitch(this);
     });
 
+    // ====================== SEARCH RESULT SFX ===============================
+    // Subtle UI feedback so it feels alive.
+    // -----------------------------------------------------------------------
     // Hover and click sounds for search result items
     const audioHover = new Audio('audio/SE_BUTTON_SCROLL_TOUCH_OUT.wav');
     const audioPush = new Audio('audio/SE_BUTTON_PUSH.wav');
@@ -136,6 +245,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    // ====================== MASCOT SYSTEM =================================
+    // All the mascot animation / voice tick simulation. Yes it's verbose.
+    // i could improve this but i am tired and it works
+    // -----------------------------------------------------------------------
     // Mascot talking logic
     
     const mascotContainer = document.getElementById('mascot-container');
@@ -151,6 +264,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let mascotForecast = '';
     let mascotTalking = false;
     const mascotTalkAudio = new Audio('audio/voca/snd_txtal.wav');
+    // IT'S TV TIME
     const tennaVoices = [
     'audio/voca/ten/snd_tv_voice_short.wav',
     'audio/voca/ten/snd_tv_voice_short_2.wav',
@@ -163,6 +277,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     'audio/voca/ten/snd_tv_voice_short_9.wav',
     'audio/voca/ten/snd_tv_voice_short_10.wav',
     ];
+    // wing ding gaster lol
     const gasterVoices = [
     'audio/voca/gas/snd_wngdng1.wav',
     'audio/voca/gas/snd_wngdng2.wav',
@@ -181,6 +296,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function setMascotOneOffVoice(filePath) {
         oneOffVoice = filePath;
     }
+    // Default to normal mascot voice
     setMascotOneOffVoice('audio/voca/talk.wav');
     let mascotBubbleTimeout = null;
 
@@ -207,6 +323,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
     tryTalkSprite(['gif', 'webp', 'png']);
+
     mascotTalking = true;
     
         let i = 0;
@@ -257,6 +374,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+
+    // Fetch mascot forecast text for current location
     let currentLat = 52.07667; // Default: The Hague
     let currentLon = 4.29861;
     function fetchMascotForecast(lat, lon) {
@@ -280,6 +399,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!mascotTalking) showMascotBubble(mascotForecast);
     });
 
+    // ====================== SEARCH BAR =====================================
+    // i dont know how the fuck i made this work but i did lmao
+    // -----------------------------------------------------------------------
     // --- SEARCH BAR LOGIC --- 
     const searchInput = document.getElementById('sidebarSearch');
     const resultsDiv = document.getElementById('searchResults');
@@ -294,7 +416,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
       // Easter egg triggers and actions
+
+    // ====================== EASTER EGGS ====================================
+    // it isn't a rootkitten website without them sorry i have to
+    // TODO: port the legacy eggs from cashdash. this is necessary
+    // -----------------------------------------------------------------------
         const easterEggs = {
+            // IT'S TV TIME
             "tenna": () => {
                 window.mascotTalking = true;
                 mascotBaseName = 'tenna';
@@ -304,9 +432,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 showMascotBubble("And now for the weather forecast, folks!!");
                 setMascotVoiceSet(tennaVoices);
             },
+            // this was for an example. this doesn't mean anything besides and i probably will comment it out later
             "owo": () => {
                 showMascotBubble("OwO! You found an Easter egg!");
             },
+            // when you know it's some gaster shit but you can't prove it
             "gaster": () => {
                 window.mascotTalking = true;
                 mascotBaseName = 'mysteryman';
@@ -316,9 +446,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 showMascotBubble("MY WEATHER IS VERY INTERESTING.");
                 setMascotVoiceSet(gasterVoices);
             }
-                // You could also change the mascot voice, image, etc.
+                // room for more shit
             }
-            // Add more Easter eggs here
+
 
 
         searchInput.addEventListener('keydown', function (e) {
@@ -374,6 +504,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+    // ====================== TEMPERATURE RENDER CORE ========================
+    // Fahrenheit toggle and "feels like" toggle all handled here.
+    // -----------------------------------------------------------------------
     function renderTemperatures() {
         if (!latestWeatherData) return;
         const isF = document.getElementById('sidebarToggleFahrenheit').classList.contains('active');
@@ -401,6 +534,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    // ====================== PLACE / WEATHER UPDATE PIPE ====================
+    // sets labels, fetches weather, updates stateful render bits, triggers mascot
+    // -----------------------------------------------------------------------
     function updateWeatherForPlace(place) {
         console.log('updateWeatherForPlace called with:', place);
         // Try to split place name and country by comma
@@ -434,6 +570,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
 
+    // ====================== INITIAL BOOT SEQUENCE ===========================
+    // 1. Respect mascot toggle default
+    // 2. Load default city (The Hague) and cascade everything else
+    // -----------------------------------------------------------------------
     // Apply initial mascot enabled state
     updateMascotEnabled();
 
@@ -445,6 +585,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         display_name: "The Hague, Netherlands"
     });
 });
+/*
+// ====================== LEGACY DUPLICATE UTIL BLOCK ========================
+// remove this later but keep it just in case i fuck something up
+// ---------------------------------------------------------------------------
 // Function to fetch current weather for a given latitude and longitude
 async function fetchWeather(lat, lon) {
     // Construct the backend API URL with query parameters for latitude and longitude
@@ -464,11 +608,10 @@ async function searchPlace(query) {
     // Parse the JSON response and return it
     return await res.json();
 }
+*/
 
-
-
-let hourlyChart = null;
-
+/*
+// (Duplicate) Hourly precipitation chart logic
 function updateHourlyPrecipChart(hourlyData) {
     const ctx = document.getElementById('precip-chart').getContext('2d');
     if (!hourlyData || hourlyData.length === 0) return;
@@ -547,3 +690,4 @@ function updateHourlyPrecipChart(hourlyData) {
     if (hourlyChart) hourlyChart.destroy();
     hourlyChart = new Chart(ctx, { type: 'line', data, options });
 }
+*/
