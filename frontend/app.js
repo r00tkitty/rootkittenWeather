@@ -23,14 +23,14 @@ async function loadIconMap() {
 
 // Function to fetch current weather for a given latitude and longitude
 async function fetchWeather(lat, lon) {
-    const url = `http://127.0.0.1:2929/weather_clean?lat=${lat}&lon=${lon}`;
+    const url = `http://127.0.0.1:6767/weather_clean?lat=${lat}&lon=${lon}`;
     const res = await fetch(url);
     return await res.json();
 }
 
 // Function to search for a place by query string
 async function searchPlace(query) {
-    const url = `http://127.0.0.1:2929/search?q=${encodeURIComponent(query)}`;
+    const url = `http://127.0.0.1:6767/search?q=${encodeURIComponent(query)}`;
     const res = await fetch(url);
     return await res.json();
 }
@@ -160,6 +160,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const sidebar = document.getElementById('sidebarNav');
     const audioOpen = new Audio('audio/SE_BUTTON_MENU_OPEN.wav');
     const audioClose = new Audio('audio/SE_BUTTON_MENU_CLOSE.wav');
+    // Input SFX: press (TOUCH_IN) and release (SE_DECIDE)
+    const sfxTouchIn = new Audio('audio/SE_BUTTON_PUSH.wav');
+    const sfxDecide = new Audio('audio/SE_DECIDE.wav');
+
+    // Little sidebar opening icon: TOUCH_IN on mousedown
+    navBtn.addEventListener('mousedown', () => {
+        sfxTouchIn.currentTime = 0;
+        sfxTouchIn.volume = 0.5;
+        sfxTouchIn.play();
+    });
     navBtn.addEventListener('click', () => {
         const willOpen = !sidebar.classList.contains('open');
         sidebar.classList.toggle('open');
@@ -195,6 +205,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
     }
+    // Toggle SFX: TOUCH_IN on press, SE_DECIDE on release
+    ['sidebarToggleMascot','sidebarToggleFahrenheit','sidebarToggleFeeling','sidebarToggleBottom']
+        .forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('mousedown', () => {
+                sfxTouchIn.currentTime = 0;
+                sfxTouchIn.volume = 0.5;
+                sfxTouchIn.play();
+            });
+            el.addEventListener('mouseup', () => {
+                sfxDecide.currentTime = 0;
+                sfxDecide.volume = 0.5;
+                sfxDecide.play();
+            });
+        });
     document.getElementById('sidebarToggleMascot').addEventListener('click', function () {
         toggleSwitch(this);
         updateMascotEnabled();
@@ -211,6 +237,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     document.getElementById('sidebarToggleBottom').addEventListener('click', function () {
         toggleSwitch(this);
+    });
+
+    // Links (anchor tags): TOUCH_IN on press, SE_DECIDE on release
+    document.addEventListener('mousedown', (e) => {
+        const a = e.target.closest('a');
+        if (!a) return;
+        sfxTouchIn.currentTime = 0;
+        sfxTouchIn.volume = 0.5;
+        sfxTouchIn.play();
+    });
+    document.addEventListener('mouseup', (e) => {
+        const a = e.target.closest('a');
+        if (!a) return;
+        sfxDecide.currentTime = 0;
+        sfxDecide.volume = 0.5;
+        sfxDecide.play();
     });
 
     // ====================== SEARCH RESULT SFX ===============================
@@ -379,7 +421,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let currentLat = 52.07667; // Default: The Hague
     let currentLon = 4.29861;
     function fetchMascotForecast(lat, lon) {
-        fetch(`http://127.0.0.1:2929/weather_clean?lat=${lat}&lon=${lon}`)
+        fetch(`http://127.0.0.1:6767/weather_clean?lat=${lat}&lon=${lon}`)
             .then(resp => resp.json())
             .then(data => {
                 mascotForecast = data.textreport || "Geen voorspelling beschikbaar.";
@@ -592,7 +634,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Function to fetch current weather for a given latitude and longitude
 async function fetchWeather(lat, lon) {
     // Construct the backend API URL with query parameters for latitude and longitude
-    const url = `http://127.0.0.1:2929/weather_clean?lat=${lat}&lon=${lon}`;
+    const url = `http://127.0.0.1:6767/weather_clean?lat=${lat}&lon=${lon}`;
     // Send a GET request to the backend API endpoint
     const res = await fetch(url);
     // Parse the JSON response and return it
@@ -602,7 +644,7 @@ async function fetchWeather(lat, lon) {
 // Function to search for a place by query string
 async function searchPlace(query) {
     // Construct the backend API URL with the search query parameter (URL-encoded)
-    const url = `http://127.0.0.1:2929/search?q=${encodeURIComponent(query)}`;
+    const url = `http://127.0.0.1:6767/search?q=${encodeURIComponent(query)}`;
     // Send a GET request to the backend API endpoint
     const res = await fetch(url);
     // Parse the JSON response and return it
