@@ -1,6 +1,6 @@
 /* ===========================================================================
     rootkittenWeather Frontend Script
-    this is a huge fucking mess and i hate it but it works so whatever
+    this is a huge mess and i hate it but it works so whatever
     =========================================================================== */
 
 // ========================= [ CORE UTIL / FETCH STUFF ] =====================
@@ -442,7 +442,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // ====================== SEARCH BAR =====================================
-    // i dont know how the fuck i made this work but i did lmao
+    // i dont know how i made this work but i did lmao
     // -----------------------------------------------------------------------
     // --- SEARCH BAR LOGIC --- 
     const searchInput = document.getElementById('sidebarSearch');
@@ -629,7 +629,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 /*
 // ====================== LEGACY DUPLICATE UTIL BLOCK ========================
-// remove this later but keep it just in case i fuck something up
+// remove this later but keep it just in case i mess something up
 // ---------------------------------------------------------------------------
 // Function to fetch current weather for a given latitude and longitude
 async function fetchWeather(lat, lon) {

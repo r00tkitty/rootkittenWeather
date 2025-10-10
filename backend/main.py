@@ -199,7 +199,7 @@ def weather_clean (lat: float, lon:float, days: int = 7, timezone: str="auto", n
             "sunset": (d_sunset[0][11:16] if len(d_sunset) > 0 else "") if d_sunset else "", # sunset time in HH:MM format (not used currently)
             "chance_of_rain" : int(d_pop_max[0]) if d_pop_max else 0 # chance of rain in percentage (not used currently)
         }
-        # PROGRAMMER'S NOTE: to my knowledge, none of this shit is even being used in the frontend. why the fuck is this even here? what are we going to do with it?
+        # PROGRAMMER'S NOTE: to my knowledge, none of this shit is even being used in the frontend. why is this even here? what are we going to do with it?
 
     hourly = raw.get("hourly", {}) or {} # hourly weather data (this is used for the graph)
     h_time = hourly.get("time", []) or [] # hourly times (also for the graph)
@@ -209,7 +209,7 @@ def weather_clean (lat: float, lon:float, days: int = 7, timezone: str="auto", n
     h_precip = hourly.get("precipitation", []) or [] # hourly precipitation (all of it is for the graph. why am i even putting these in)
 
     start_idx = 0 # starting index for hourly data
-    cur_iso = cur.get("time") # current ISO time. i'm gonna be honest i forgot what the fuck this does
+    cur_iso = cur.get("time") # current ISO time. i'm gonna be honest i forgot what this does
     if cur_iso and cur_iso in h_time: # find the current hour in the hourly data
         start_idx = h_time.index(cur_iso) # starting index for hourly data
 
