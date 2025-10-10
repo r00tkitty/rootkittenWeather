@@ -224,6 +224,10 @@
     margin-bottom: 0.2em;
     display: block;
 }
+a {
+    color: #FFFFFF;
+    
+}
 
 /* Nav bar styles */
 .nav-toggle-btn {
@@ -319,6 +323,9 @@
 }
 .sidebar-toggle.active .sidebar-toggle-knob {
     left: 18px;
+}
+#sidebarToggleBottom {
+    display: none;
 }
 .sidebar-bottom {
     margin-top: auto;
