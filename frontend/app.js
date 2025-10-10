@@ -488,7 +488,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 showMascotBubble("MY WEATHER IS VERY INTERESTING.");
                 setMascotVoiceSet(gasterVoices);
             }
-                // room for more shit
+                // room for more stuff
             }
 
 

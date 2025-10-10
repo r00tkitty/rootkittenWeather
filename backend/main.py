@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Form # import fastapi
-from fastapi.middleware.cors import CORSMiddleware #import cors bullshit
+from fastapi.middleware.cors import CORSMiddleware #import cors middleware
 import time # hey what time is it
 from datetime import datetime
 from backend import controller  # <-- your controller.py file
@@ -10,7 +10,7 @@ from fastapi import HTTPException, WebSocketException
 
 app = FastAPI(title="rootkitten(weather); API") # name the app. 
 
-# the cors bullshit in question
+# the cors middleware in question
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], # dev thing, allow from everywhere
@@ -108,7 +108,7 @@ def pick_daily_icon(day_str : str, hourly_times: list[str], hourly_codes: list[i
                 return map_weather_code(hourly_codes[i]) # return the mapped weather code
     return "unknown" # if all else fails, return unknown
 
-# i just had to add this shit so here we go. we're translating this to english when we're done with the presentation
+# i just had to add this so here we go. we're translating this to english when we're done with the presentation
 def text_forecast(feels_like: float, wind_kph: float) -> str: 
         if feels_like < 0 and wind_kph > 10: # if feels like is below 0 and wind speed is above 10
             return "Het is heel koud en het stormt! Verwarming helemaal aan!" # It's very cold and stormy! Heating full blast! (ugh i hate dutch)
@@ -160,7 +160,7 @@ def weather_clean (lat: float, lon:float, days: int = 7, timezone: str="auto", n
     def kph_to_mps(k: float) -> float: # convert kph to mps
         return round(k * (5/18), 1) # round to nearest tenth
     cur = raw.get("current", {}) or {} # current weather data
-    # all the shit we want to return
+    # all the things we want to return
     current = { # formatted current weather data
         "temp_c": round(cur.get("temperature_2m", 0), 1), # temperature in Celsius
         "temp_f": celcius_to_f(cur.get("temperature_2m", 0)), # temperature in Fahrenheit (with a fancy conversion because the school wants me to)
@@ -199,13 +199,13 @@ def weather_clean (lat: float, lon:float, days: int = 7, timezone: str="auto", n
             "sunset": (d_sunset[0][11:16] if len(d_sunset) > 0 else "") if d_sunset else "", # sunset time in HH:MM format (not used currently)
             "chance_of_rain" : int(d_pop_max[0]) if d_pop_max else 0 # chance of rain in percentage (not used currently)
         }
-        # PROGRAMMER'S NOTE: to my knowledge, none of this shit is even being used in the frontend. why is this even here? what are we going to do with it?
+        # PROGRAMMER'S NOTE: to my knowledge, none of this is even being used in the frontend. why is this even here? what are we going to do with it?
 
     hourly = raw.get("hourly", {}) or {} # hourly weather data (this is used for the graph)
     h_time = hourly.get("time", []) or [] # hourly times (also for the graph)
     h_temp = hourly.get("temperature_2m", []) or [] # hourly temperatures (also for the graph)
     h_pop = hourly.get("precipitation_probability", []) or [] # hourly precipitation probabilities (all of it)
-    h_code = hourly.get("weather_code", []) or [] # hourly weather codes (all of this shit)
+    h_code = hourly.get("weather_code", []) or [] # hourly weather codes (all of this)
     h_precip = hourly.get("precipitation", []) or [] # hourly precipitation (all of it is for the graph. why am i even putting these in)
 
     start_idx = 0 # starting index for hourly data
