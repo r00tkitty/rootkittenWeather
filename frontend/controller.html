@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart App Controller</title>
+  <style>
+    body { font-family: sans-serif; color: #fff; background: #111; margin: 2em; }
+    button { margin: .5em 0; padding: .5em 1em; cursor: pointer; }
+    input, select { margin: .25em; padding: .25em; }
+    pre { background: #222; padding: 1em; border-radius: 6px; }
+  </style>
+    <link rel="icon" type="image/png" href="img/whiskervision.png">
+</head>
+<body>
+  <h1>Smart App Controller</h1>
+<h3>Upload new input file</h3>
+<form id="uploadForm">
+  <input type="file" id="fileInput" name="file" accept=".txt">
+  <button type="submit">Upload</button>
+</form>
+<p id="uploadResult"></p>
+
+<hr>
+  <section>
+    <button onclick="getDays()">Show Number of Days</button>
+    <button onclick="runAuto()">Auto Calculate Actuators</button>
+  </section>
+
+  <section>
+    <h3>Overwrite a Value</h3>
+    <input id="date" placeholder="dd-mm-yyyy">
+    <select id="system">
+      <option value="1">CV</option>
+      <option value="2">Ventilation</option>
+      <option value="3">Bewatering</option>
+    </select>
+    <input id="value" placeholder="new value">
+    <button onclick="overwrite()">Apply</button>
+  </section>
+
+  <section>
+    <h3>Output File</h3>
+    <pre id="output"></pre>
+    <button onclick="refreshOutput()">Refresh Output</button>
+  </section>
+
+  <script src="controller.js"></script>
+  <a href="index.html">Click here to go back</a>
+</body>
+</html>

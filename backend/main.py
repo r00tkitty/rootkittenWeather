@@ -1,7 +1,12 @@
-from fastapi import FastAPI # import fastapi
+from fastapi import FastAPI, Form # import fastapi
 from fastapi.middleware.cors import CORSMiddleware #import cors bullshit
 import time # hey what time is it
 from datetime import datetime
+from backend import controller  # <-- your controller.py file
+import os  # for file path handling
+from fastapi import UploadFile, File
+from fastapi import HTTPException, WebSocketException
+
 
 app = FastAPI(title="rootkitten(weather); API") # name the app. 
 
@@ -249,6 +254,85 @@ def weather_clean (lat: float, lon:float, days: int = 7, timezone: str="auto", n
         "weekly": week_list, # weekly weather forecast
         "textreport": weather_report, # text-based weather report
     }
+
+
+
+
+
+#CONTROLLER STUFF BELOW THIS LINE LAST MINUTE ADDITION LMAO
+
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "data")) # get the directory of the current file
+INPUT_FILE = os.path.join(BASE_DIR, "input.txt") # path to input.txt
+OUTPUT_FILE = os.path.join(BASE_DIR, "output.txt") # path to output.txt
+MAX_FILE_SIZE_MB = 2  # 2 MB upload limit
+ALLOWED_EXTENSIONS = {".txt"}  # Allowed text types only
+
+
+
+
+@app.post("/api/controller/upload")
+async def upload_file(file: UploadFile = File(...)):
+    """
+    Uploads a text file and overwrites data/input.txt.
+    Only accepts .txt files under 2 MB.
+    """
+    UPLOAD_DIR = os.path.join(os.path.dirname(__file__), "data") # Directory to save uploaded files
+    os.makedirs(UPLOAD_DIR, exist_ok=True) # Create directory if it doesn't exist
+
+    # Validate file extension
+    if not file.filename.lower().endswith(".txt"): # only allow .txt files
+        raise HTTPException(status_code=400, detail="Only .txt files are allowed.")
+
+    # Validate size (2 MB limit)
+    contents = await file.read()
+    if len(contents) > 2 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="File too large (max 2 MB).")
+
+    # Always overwrite input.txt, regardless of uploaded name
+    save_path = os.path.join(UPLOAD_DIR, "input.txt")
+
+    with open(save_path, "wb") as f: # open the file as write - binary
+        f.write(contents) # write the contents to the file
+
+    print(f"Overwrote input file: {save_path}") # Log the overwrite action
+    return {"message": "File uploaded and overwritten successfully as input.txt"}
+
+@app.get("/api/controller/days") # URL ends with /api/controller/days
+def api_days(): # function name
+    days = controller.aantal_dagen(INPUT_FILE) # call the function from controller.py
+    return {"days": days} # return the number of days
+
+
+@app.post("/api/controller/auto") # URL ends with /api/controller/auto
+def api_auto(): # function name
+    controller.auto_bereken(INPUT_FILE, OUTPUT_FILE) # call the function from controller.py
+    return {"status": "ok"} # return ok
+
+
+@app.post("/api/controller/overwrite")
+def api_overwrite( # form parameters
+    date: str = Form(...),
+    system: str = Form(...),
+    value: str = Form(...)
+):
+    result = controller.overwrite_settings( 
+        OUTPUT_FILE, 
+        date_to_change=date, 
+        system_choice=system,
+        new_value=value
+    )
+    return {"result": result}
+
+
+
+@app.get("/api/controller/output") # URL ends with /api/controller/output
+def api_get_output(): # function name
+    try: # try to read the output file
+        with open(OUTPUT_FILE, "r") as f: # open the file
+            lines = [line.strip() for line in f.readlines()] # read the lines and strip whitespace
+        return {"lines": lines} # return the lines
+    except FileNotFoundError: # if the file is not found
+        return {"lines": []} # return an empty list
 
 # that's it for the backend. now onto the frontend where the real fun begins
 
