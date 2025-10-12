@@ -13,7 +13,7 @@ def aantal_dagen(input_file):  # Function to count number of days in input file.
 def auto_bereken(input_file, output_file): # Automatically calculate actuator values and save them to output file.
     try:
         with open(input_file, 'r') as f:
-            lines = f.readlines()[1:]  # skip header line
+            lines = [line for line in f.readlines()[1:] if line.strip()]  # skip header line and empty lines
 
         with open(output_file, 'w') as out:
             for line in lines: # Process each line
