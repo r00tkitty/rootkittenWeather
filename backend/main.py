@@ -13,12 +13,12 @@ app = FastAPI(title="rootkitten(weather); API") # name the app.
 # the cors middleware in question
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # dev thing, allow from everywhere
+    allow_origins=["https://rootkitten.dev", "https://www.rootkitten.dev", "https://weather.rootkitten.dev"], # dev thing, allow from everywhere
     allow_methods=["*"], # dev thing, allow from everywhere
     allow_headers=["*"], # you get it by now
 )
 # website health route (is it alive)
-@app.get("/health") # URL will be rootkitten.dev/weather/health.
+@app.get("/api/health") # URL will be rootkitten.dev/weather/health.
 def health(): # function name
     return {"ok" : True, "t": int(time.time())}  # am i alive, what time is it
 
@@ -29,7 +29,7 @@ import requests # for making the requests
 BASE_GEO = "https://geocoding-api.open-meteo.com/v1/search" # the geocoding API endpoint
 
 
-@app.get("/search") #ditto, except URL ends with search
+@app.get("/api/search") #ditto, except URL ends with search
 def search(q: str, count: int = 5, language : str = "en"): # function name and params
 
     try: # try to make the request
@@ -58,7 +58,7 @@ def search(q: str, count: int = 5, language : str = "en"): # function name and p
 
 # This is the raw data from the weather API. We will clean it up later with /weather_clean. This is mostly for debugging.
 BASE_FORECAST = "https://api.open-meteo.com/v1/forecast" # the forecast API endpoint
-@app.get("/weather") # URL ends with weather
+@app.get("/api/weather") # URL ends with weather
 def weather (lat: float, lon:float, days: int = 7, timezone: str="auto" ): # function name and params
      # lat and lon are required, days is optional (default 7), timezone is optional
     try: # try to make the request
@@ -123,7 +123,7 @@ def text_forecast(feels_like: float, wind_kph: float) -> str:
         else: # if feels like is 22 or above (warm)
             return "Warm! Airco aan!" # Warm! Air conditioning on! (thank god this is over)
 
-@app.get("/weather_clean") # URL ends with weather_clean
+@app.get("/api/weather_clean") # URL ends with weather_clean
 # HERE WE GO NOW THE FUN PART BEGINS
 def weather_clean (lat: float, lon:float, days: int = 7, timezone: str="auto", name : str | None = None): # function name and params
     try: # try to make the request
