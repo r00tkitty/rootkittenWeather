@@ -40,9 +40,12 @@ def auto_bereken(input_file, output_file): # Automatically calculate actuator va
 
                 out.write(f"{date};{cv};{ventilation};{str(watering)}\n") # Write to output file
 
-        print(f"Actuator data written to {output_file}") # Confirmation message
-    except FileNotFoundError: # Handle file not found error
-        print("Error: input file not found.") 
+        # Success
+        return {"status": "ok"}
+    except FileNotFoundError:
+        return {"status": "error", "message": "input file not found"}
+    except Exception as e:
+        return {"status": "error", "message": f"An error occurred: {e}"}
 
 
 def overwrite_settings(output_file, date_to_change=None, system_choice=None, new_value=None): 

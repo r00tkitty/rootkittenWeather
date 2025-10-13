@@ -305,8 +305,8 @@ def api_days(): # function name
 
 @app.post("/api/controller/auto") # URL ends with /api/controller/auto
 def api_auto(): # function name
-    controller.auto_bereken(INPUT_FILE, OUTPUT_FILE) # call the function from controller.py
-    return {"status": "ok"} # return ok
+    result = controller.auto_bereken(INPUT_FILE, OUTPUT_FILE) # call the function from controller.py
+    return result
 
 
 @app.post("/api/controller/overwrite")
